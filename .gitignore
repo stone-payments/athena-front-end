@@ -1,4 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -154,7 +153,19 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+### Example user template template
+### Example user template
 
-.idea/athena-front-end.iml
+# IntelliJ project files
+*.iml
+out
+gen
 .idea/misc.xml
 .idea/modules.xml
+Procfile
+__init__.py
+api.py
+api_modules/
+requirements.txt
+run.py
+static/
