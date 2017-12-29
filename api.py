@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 from api_modules import *
-import datetime
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -29,12 +28,6 @@ def get_commits_repo():
 def get_members_repo():
     response = repo_members()
     return response
-
-
-# @app.route('/get_repo_infos')
-# def get_repo_infos():
-#     response = repo_infos()
-#     return response
 
 
 @app.route('/get_best_practices_repo')
@@ -203,21 +196,6 @@ def get_team_name():
 def get_user_login():
     response = user_login()
     return response
-
-
-@app.route('/de_para')
-def de_para():
-    query_result = db['Dev'].find({'db_last_updated': {'$gte': datetime.datetime(2017, 12, 19, 0, 00, 0, 000)}},
-                                  {'devName': 1, 'login': 1})
-    result = [dict(i) for i in query_result]
-    for readme_status in result:
-        if readme_status['devName'] is None:
-            readme_status['devName'] = 'None'
-    print(result)
-    if not result:
-        return json.dumps([{'response': 404}])
-    print(result)
-    return json.dumps(result)
 
 
 if __name__ == '__main__':

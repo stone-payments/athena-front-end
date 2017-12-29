@@ -129,7 +129,7 @@ $(function() {
             labels: labels,
             datasets: [{
               label: "",
-              backgroundColor: ['#0B3B1F', '#C52233'],
+              backgroundColor: ['#C52233', '#0B3B1F'],
               borderWidth: 1,
               data: dataSize
             }]

@@ -1,9 +1,6 @@
-# from flask import request
 from .config import *
-# import datetime as dt
-# import re
-# import json
 from .client import *
+from .module import *
 
 
 def avatar():
@@ -107,7 +104,7 @@ def user_team():
             'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Dev'}},
         {
             '$match':
-                {"Dev.0.login": name, 'type': 'dev_to_team'}
+                {"Dev.0.login": name, 'type': 'dev_to_team', 'data.db_last_updated': {'$gte': utc_time_datetime_format(-1)}}
         },
         {'$sort': {'Team.teamName': 1}},
         {'$project': {'_id': 0, "Team.teamName": 1, 'Team.org': 1}}

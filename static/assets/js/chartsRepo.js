@@ -39,11 +39,10 @@ $(function() {
 
   let xhr;
   $('#name').autoComplete({
-
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-
+    $('.autocomplete-suggestions').show();
      $.getJSON(address+'/get_repo_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.repoName;
@@ -51,42 +50,17 @@ $(function() {
         response(returnedData);
       });
 
+    },
+    onSelect: function(e, term, item){
+         $('#find').click();
     }
   });
 
-//let xhr;
-//  $('#name').autoComplete({
-//    minChars: 1,cache: false,
-//    source: function(term, response) {
-//      console.log('event');
-//
-////      try {
-////        xhr.abort();
-////      } catch (e) {}
-//
-//      console.log(address+'/get_repo_name?name=' + term+'&org='+ orgSelector);
-//      $.ajax({
-//      url: address+'/get_repo_name?name=' + term+'&org='+ orgSelector,
-//      type: 'GET',
-//      cache:false,
-//      success: function(result) {
-//        returnedData = JSON.parse(result);
-//        let returnedData2 = returnedData.map(function(num) {
-//          return num.repoName;
-//        });
-//        console.log(returnedData2);
-//            response(returnedData2);
-//      }
-//    });
-//    }
-//  });
-
-
   $('#name').keypress(function(e) {
     if (e.which == 13) { //Enter key pressed
-     $('.autocomplete-suggestion').hide();
+      $('.autocomplete-suggestion').hide();
+      $('.autocomplete-suggestions').hide();
       $('#find').click(); //Trigger search button click event
-
     }
   });
   $("#find").click(function() {

@@ -3,6 +3,7 @@ import json
 from operator import itemgetter
 from flask import request
 from api_modules import db
+from .module import *
 
 
 def org_names():
@@ -15,7 +16,7 @@ def org_names():
 
 def org_languages():
     name = request.args.get("name")
-    query = [{'$match': {'org': name}},
+    query = [{'$match': {'org': name, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$unwind': "$languages"},
              {'$group': {
                  '_id': {
@@ -46,7 +47,7 @@ def org_open_source():
                 array_to_be_find.append({'count': 0, 'openSource': key})
 
     name = request.args.get("name")
-    query = [{'$match': {'org': name}},
+    query = [{'$match': {'org': name, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$group': {
                  '_id': {
                      'openSource': "$openSource",
@@ -57,6 +58,7 @@ def org_open_source():
              {'$project': {'_id': 0, "openSource": "$_id.openSource", 'count': 1}}
              ]
     query_result = db.Repo.aggregate(query)
+    print(utc_time_datetime_format(0))
     open_source_type_list = [dict(i) for i in query_result]
     soma = sum([license_type['count'] for license_type in open_source_type_list])
     for open_source_status in open_source_type_list:
@@ -120,7 +122,7 @@ def org_readme():
             if not any(d['status'] == key for d in array_to_be_find):
                 array_to_be_find.append({'count': 0, 'status': key})
     name = request.args.get("name")
-    query = [{'$match': {'org': name}},
+    query = [{'$match': {'org': name, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$group': {
                  '_id': {
                      'status': "$readme",
@@ -149,7 +151,7 @@ def open_source_readme_org():
             if not any(d['status'] == key for d in array_to_be_find):
                 array_to_be_find.append({'count': 0, 'status': key})
     name = request.args.get("name")
-    query = [{'$match': {'org': name, 'openSource': True}},
+    query = [{'$match': {'org': name, 'openSource': True, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$group': {
                  '_id': {
                      'status': "$readme",
@@ -174,7 +176,7 @@ def open_source_readme_org():
 
 def org_license():
     name = request.args.get("name")
-    query = [{'$match': {'org': name}},
+    query = [{'$match': {'org': name, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$group': {
                  '_id': {
                      'license': "$licenseType",

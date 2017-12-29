@@ -3,6 +3,8 @@ from .config import *
 import datetime as dt
 import re
 import json
+from operator import itemgetter
+from .module import *
 
 
 def check_with_exist():
@@ -79,11 +81,14 @@ def team_open_source():
     print(readme_status_list)
     soma = sum([readme_status['count'] for readme_status in readme_status_list])
     for readme_status in readme_status_list:
-        if readme_status['status'][0] is None:
-            readme_status['status'] = 'None'
-        else:
-            readme_status['status'] = readme_status['status'][0]
+        # if readme_status['status'][0] is None:
+        #     readme_status['status'] = 'None'
+        # else:
+        readme_status['status'] = readme_status['status'][0]
         readme_status['count'] = round(int(readme_status['count']) / soma * 100, 1)
+    if len(readme_status_list) < 2:
+        find_key(readme_status_list, [True, False])
+    readme_status_list = sorted(readme_status_list, key=itemgetter('status'), reverse=False)
     print(readme_status_list)
     return json.dumps(readme_status_list)
 
@@ -181,6 +186,10 @@ def team_readme():
         else:
             readme_status['status'] = readme_status['status'][0]
         readme_status['count'] = round(int(readme_status['count']) / soma * 100, 1)
+    if len(readme_status_list) < 3:
+        find_key(readme_status_list, ['None', 'Poor', 'OK'])
+    print(readme_status_list)
+    readme_status_list = sorted(readme_status_list, key=itemgetter('status'), reverse=True)
     print(readme_status_list)
     return json.dumps(readme_status_list)
 
