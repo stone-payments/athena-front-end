@@ -165,7 +165,7 @@ gen
 Procfile
 __init__.py
 api.py
-api_modules/
+api_collections/
 requirements.txt
 run.py
 static/

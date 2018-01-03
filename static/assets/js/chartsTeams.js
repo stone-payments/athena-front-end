@@ -6,7 +6,7 @@ $(function() {
   let readmeChart = null;
   let LicenseType = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
-  let lastDay = moment().format("YYYY-MM-") + moment().daysInMonth();
+  let lastDay = moment().format('YYYY-MM-DD')
    $('#orgSelector').on('change', function() {
      orgSelector = $('#orgSelector').val();
   }),
@@ -38,19 +38,20 @@ $(function() {
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
      $.getJSON(address+'/get_team_name?name=' + term+'&org='+ orgSelector, function(result) {
-        console.log(orgSelector);
         let returnedData = result.map(function(num) {
           return num.slug;
         });
-        console.log(returnedData);
         response(returnedData);
       });
+    },
+    onSelect: function(e, term, item){
+         $('#find').click();
     }
   });
-
-
   $('#name').keypress(function(e) {
     if (e.which == 13) { //Enter key pressed
+      $('.autocomplete-suggestion').hide();
+      $('.autocomplete-suggestions').hide();
       $('#find').click(); //Trigger search button click event
     }
   });
@@ -104,25 +105,6 @@ $(function() {
         if (openSourceChart != null) {
           openSourceChart.destroy();
         }
-//        if (openSource == 404){
-//          $(".content").hide();
-//          $(document).ready(function() {
-//            $.notify({
-//              icon: 'pe-7s-close-circle',
-//              message: "User does not exist"
-//            }, {
-//              type: 'danger',
-//              timer: 1000,
-//              placement: {
-//            		from: 'top',
-//            		align: 'right'
-//            	},
-//            });
-//          });
-//        }
-//        else {
-//          $(".content").show();
-//        }
         openSourceChart = new Chart(document.getElementById("openSourceChart"), {
           type: 'doughnut',
           data: {
@@ -148,10 +130,6 @@ $(function() {
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
-//        let ok = Number(returnedData[0]['ok']);
-//        let poor = Number(returnedData[0]['poor']);
-//        let none = Number(returnedData[0]['bad']);
-        console.log(returnedData);
         let labels = returnedData.map(function(num) {
           return num.status;
         });

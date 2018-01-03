@@ -3,7 +3,7 @@ $(function() {
   let pieChart = null;
   let issuesChart = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
-  let lastDay = moment().format("YYYY-MM-") + moment().daysInMonth();
+  let lastDay = moment().format('YYYY-MM-DD')
 
    $('#orgSelector').on('change', function() {
      orgSelector = $('#orgSelector').val();
@@ -27,35 +27,25 @@ $(function() {
             console.log(error);
           }
         });
-//$(document).ready(function() {
-//    $('#orgSelector').change(function(){
-//     orgSelector = $('#orgSelector').val();
-////     $('#name').autoComplete().clearCache();
-//    });
-//});
   colors = ['#0e6251', '#117864', '#148f77', '#17a589', '#1abc9c', '#48c9b0', '#76d7c4', '#a3e4d7', '#d1f2eb',
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
-
   let xhr;
   $('#name').autoComplete({
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-    $('.autocomplete-suggestions').show();
      $.getJSON(address+'/get_repo_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.repoName;
         });
         response(returnedData);
       });
-
     },
     onSelect: function(e, term, item){
          $('#find').click();
     }
   });
-
   $('#name').keypress(function(e) {
     if (e.which == 13) { //Enter key pressed
       $('.autocomplete-suggestion').hide();

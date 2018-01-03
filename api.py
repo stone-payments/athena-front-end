@@ -1,9 +1,10 @@
-from flask import Flask
+from flask_api import FlaskAPI
 from flask_cors import CORS
-from api_modules import *
+from api_collections import *
+from api_configurations.config import *
 
 
-app = Flask(__name__, static_url_path='/static')
+app = FlaskAPI(__name__, static_url_path='/static')
 CORS(app)
 
 with open("static/assets/js/configs.js", "w") as config_js:
@@ -14,188 +15,156 @@ with open("static/assets/js/configs.js", "w") as config_js:
 
 @app.route('/get_languages_repo')
 def get_languages_repo():
-    response = repo_languages()
-    return response
+    return repo_languages(db)
 
 
 @app.route('/get_commits_repo')
 def get_commits_repo():
-    response = repo_commits()
-    return response
+    return repo_commits(db)
 
 
 @app.route('/get_members_repo')
 def get_members_repo():
-    response = repo_members()
-    return response
+    return repo_members(db)
 
 
 @app.route('/get_best_practices_repo')
 def get_best_practices_repo():
-    response = repo_best_practices()
-    return response
+    return repo_best_practices(db)
 
 
 @app.route('/get_issues_repo')
 def get_issues_repo():
-    response = repo_issues()
-    return response
+    return repo_issues(db)
 
 
 @app.route('/get_repo_name')
 def get_repo_name():
-    response = repo_name()
-    return response
+    return repo_name(db)
 
 # Orgs ############
 
 
 @app.route('/get_org_names')
 def get_org_names():
-    response = org_names()
-    return response
+    return org_names(db)
 
 
 @app.route('/get_org_info')
 def get_org_info():
-    response = org_info()
-    return response
+    return org_info(db)
 
 
 @app.route('/get_languages_org')
 def get_languages_org():
-    response = org_languages()
-    return response
+    return org_languages(db)
 
 
 @app.route('/get_open_source_org')
 def get_open_source_org():
-    response = org_open_source()
-    return response
+    return org_open_source(db)
 
 
 @app.route('/get_commits_org')
 def get_commits_org():
-    response = org_commits()
-    return response
+    return org_commits(db)
 
 
 @app.route('/get_readme_org')
 def get_readme_org():
-    response = org_readme()
-    return response
+    return org_readme(db)
 
 
 @app.route('/get_open_source_readme_org')
 def get_open_source_readme_org():
-    response = open_source_readme_org()
-    return response
+    return open_source_readme_org(db)
 
 
 @app.route('/get_license_type_org')
 def get_license_type_org():
-    response = org_license()
-    return response
+    return org_license(db)
 
 
 @app.route('/get_issues_org')
 def get_issues_org():
-    response = org_issues()
-    return response
+    return org_issues(db)
 
 
 # Teams ###
 @app.route('/team_check_with_exist')
 def team_check_with_exist():
-    response = check_with_exist()
-    return response
+    return check_with_exist(db)
 
 
 @app.route('/get_languages_team')
 def get_languages_team():
-    response = team_languages()
-    return response
+    return team_languages(db)
 
 
 @app.route('/get_open_source_team')
 def get_open_source_team():
-    response = team_open_source()
-    return response
+    return team_open_source(db)
 
 
 @app.route('/get_commits_team')
 def get_commits_team():
-    response = team_commits()
-    return response
+    return team_commits(db)
 
 
 @app.route('/get_readme_team')
 def get_readme_team():
-    response = team_readme()
-    return response
+    return team_readme(db)
 
 
 @app.route('/get_license_type_team')
 def get_license_type_team():
-    response = team_license()
-    return response
+    return team_license(db)
 
 
 @app.route('/get_repo_members_team')
 def get_repo_members_team():
-    response = team_repo_members()
-    return response
+    return team_repo_members(db)
 
 
 @app.route('/get_issues_team')
 def get_issues_team():
-    response = issues_team()
-    return response
+    return issues_team(db)
 
 
+@app.route('/get_team_name')
+def get_team_name():
+    return team_name(db)
 # Users #########################
 
 
 @app.route('/get_avatar')
 def get_avatar():
-    response = avatar()
-    return response
+    return avatar(db)
 
 
 @app.route('/get_user_commit')
 def get_user_commit():
-    response = user_commit()
-    return response
+    return user_commit(db)
 
 
 @app.route('/get_user_contributed_repo')
 def get_user_contributed_repo():
-    response = user_contributed_repo()
-    return response
+    return user_contributed_repo(db)
 
 
 @app.route('/get_user_stats')
 def get_user_stats():
-    response = user_stats()
-    return response
+    return user_stats(db)
 
 
 @app.route('/get_user_team')
 def get_user_team():
-    response = user_team()
-    return response
-
-
-@app.route('/get_team_name')
-def get_team_name():
-    response = team_name()
-    return response
+    return user_team(db)
 
 
 @app.route('/get_user_login')
 def get_user_login():
-    response = user_login()
-    return response
+    return user_login(db)
 
 
 if __name__ == '__main__':

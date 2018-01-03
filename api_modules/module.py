@@ -1,21 +1,17 @@
 import datetime as dt
-from flask import request
 import re
 import json
+from flask import request
 
 
-def query_find_to_dictionary(db, collection, query, projection):
-    query_result = db[collection].find(query, projection)
-    return [dict(i) for i in query_result]
+def utc_time_datetime_format(since_time_delta):
+    return dt.datetime.utcnow() + dt.timedelta(int(since_time_delta))
 
 
-def query_find(db, collection, query, projection):
-    return db[collection].find(query, projection)
-
-
-def query_aggregate_to_dictionary(db, collection, query):
-    query_result = db[collection].aggregate(query)
-    return [dict(i) for i in query_result]
+def find_key(array_to_be_find, keys):
+    for key in keys:
+        if not any(d['status'] is key or d['status'] == key for d in array_to_be_find):
+            array_to_be_find.append({'count': 0, 'status': str(key)})
 
 
 def start_day_string_time():
@@ -38,17 +34,33 @@ def fill_all_dates(day_in_range, collection_count_list):
     return day
 
 
+def accumulator(days):
+    value_accumulated = 0
+    for day in days:
+        if day["count"] > 0:
+            value_accumulated += day["count"]
+            day["count"] = value_accumulated
+        else:
+            day["count"] = value_accumulated
+    return days
+
+
 def process_data(db, db_collection, db_query, days_delta, start_date):
     count_list = db[db_collection].aggregate(db_query)
-
     count_list = [dict(i) for i in count_list]
     for count in count_list:
         count['date'] = dt.datetime(count['year'], count['month'], count['day'], 0, 0)
     range_days = [start_date + dt.timedelta(days=i) for i in range(days_delta.days + 1)]
-    processed_list = []
-    for day in range_days:
-        processed_list.append(fill_all_dates(day, count_list))
+    processed_list = [fill_all_dates(day, count_list) for day in range_days]
     return processed_list
+
+
+def process_issues(db, db_collection, delta, start_date, created, closed):
+    created_issues_list = process_data(db, db_collection, created, delta, start_date)
+    created_issues_list = accumulator(created_issues_list)
+    closed_issues_list = process_data(db, db_collection, closed, delta, start_date)
+    closed_issues_list = accumulator(closed_issues_list)
+    return json.dumps([closed_issues_list, created_issues_list])
 
 
 def name_regex_search(db, collection_name, document_name):
@@ -72,3 +84,9 @@ def name_and_org_regex_search(db, collection_name, document_name):
     if not query_result:
         return json.dumps([{'response': 404}])
     return json.dumps(result)
+
+
+def last_updated_at(query):
+    return round((dt.datetime.utcnow() - query).total_seconds() / 60)
+
+

@@ -7,7 +7,7 @@ $(function() {
   let openSourceReadme = null;
   let LicenseType = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
-  let lastDay = moment().format("YYYY-MM-") + moment().daysInMonth();
+  let lastDay = moment().format('YYYY-MM-DD')
   colors = ['#0e6251', '#117864', '#148f77', '#17a589', '#1abc9c', '#48c9b0', '#76d7c4', '#a3e4d7', '#d1f2eb',
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
