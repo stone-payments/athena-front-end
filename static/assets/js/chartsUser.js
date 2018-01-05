@@ -1,6 +1,7 @@
 $(function() {
   let commmit_chart = null;
   let stats_chart = null;
+  let work_profile = null;
   let avatar = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
   let lastDay = moment().format('YYYY-MM-DD')
@@ -8,7 +9,7 @@ $(function() {
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
-
+$(".content").show();
 
   $('#name').autoComplete({
       minChars: 1,cache: false, delay : 20,
@@ -312,6 +313,132 @@ $(function() {
         console.log(error);
       }
     });
+    $.ajax({
+      url: address+'/get_user_team?name=' + name,
+      type: 'GET',
+      success: function(response) {
+        returnedData = JSON.parse(response);
+        if (work_profile != null) {
+      work_profile.destroy();
+    }
+    let ctx = document.getElementById("work_profile").getContext('2d');
+    work_profile = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: "dataset",
+			borderColor: 'rgba(255,99,132,1)',
+			backgroundColor: 'rgba(255,99,132,1)',
+			pointRadius: 9,
+			pointHoverRadius: 8,
+            data: [{
+                x: -100,
+                y: -100
+            }, {
+                x: 100,
+                y: 100
+            }, {
+                x: -100,
+                y: 10
+            }]
+        }]
+    },
+    options: {
+    layout :{
+    padding: {
+                left: 30,
+                right: 30,
+                top: 30,
+                bottom: 30
+            }
+    },
+            scales: {
+                xAxes: [{
+                id: "x-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'New Work',
+                                padding: 10,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false,
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'top'
+                },
+                {
+                id: "x-axis-2",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Code Refactoring',
+                                padding: 10,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'bottom'
+                }
+                ],
+                yAxes: [{
+                display: true,
+                position: 'right',
+                id: "y-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Higher Committer',
+                                padding: 10,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                },
+                {
+                display: true,
+                position: 'left',
+                id: "y-axis-2",
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Lower Committer',
+                                padding: 10,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                }]
+            }
+        }
+    });
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+
       $(".content").show();
   });
 });

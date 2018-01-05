@@ -1,10 +1,10 @@
-from flask_api import FlaskAPI
+from flask import Flask
 from flask_cors import CORS
 from api_collections import *
 from api_configurations.config import *
 
 
-app = FlaskAPI(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='/static')
 CORS(app)
 
 with open("static/assets/js/configs.js", "w") as config_js:
