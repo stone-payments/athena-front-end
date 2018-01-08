@@ -11,7 +11,7 @@ def utc_time_datetime_format(since_time_delta):
 def find_key(array_to_be_find, keys):
     for key in keys:
         if not any(d['status'] is key or d['status'] == key for d in array_to_be_find):
-            array_to_be_find.append({'count': 0, 'status': str(key)})
+            array_to_be_find.append({'count': 0, 'status': key})
 
 
 def start_day_string_time():

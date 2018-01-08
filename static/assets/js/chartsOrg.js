@@ -241,13 +241,13 @@ $(function() {
       success: function(response) {
         returnedData = JSON.parse(response);
         let labelsCommit = returnedData.map(function(num) {
-          return num.openSource;
+          return num.status;
         });
         let dataCommits = returnedData.map(function(num) {
           return num.count;
         });
-        let openSource = Number(returnedData[0]['openSource']);
-        let notOpenSource = Number(returnedData[0]['notOpenSource']);
+//        let openSource = Number(returnedData[0]['openSource']);
+//        let notOpenSource = Number(returnedData[0]['notOpenSource']);
         if (openSourceChart != null) {
           openSourceChart.destroy();
         }

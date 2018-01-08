@@ -314,33 +314,29 @@ $(".content").show();
       }
     });
     $.ajax({
-      url: address+'/get_user_team?name=' + name,
+      url: address+'/get_user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
         if (work_profile != null) {
       work_profile.destroy();
     }
+    console.log(returnedData);
+    let labelsIssues1 = returnedData.map(function(num) {
+          return num;
+        });
+console.log(labelsIssues1);
     let ctx = document.getElementById("work_profile").getContext('2d');
     work_profile = new Chart(ctx, {
     type: 'scatter',
     data: {
         datasets: [{
             label: "dataset",
-			borderColor: 'rgba(255,99,132,1)',
-			backgroundColor: 'rgba(255,99,132,1)',
+			borderColor: '#17a589',
+			backgroundColor: '#17a589',
 			pointRadius: 9,
 			pointHoverRadius: 8,
-            data: [{
-                x: -100,
-                y: -100
-            }, {
-                x: 100,
-                y: 100
-            }, {
-                x: -100,
-                y: 10
-            }]
+            data: returnedData
         }]
     },
     options: {

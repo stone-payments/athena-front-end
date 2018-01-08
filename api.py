@@ -167,6 +167,11 @@ def get_user_login():
     return user_login(db)
 
 
+@app.route('/get_user_new_work')
+def get_user_new_work():
+    return new_work(db)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=os.getenv("PORT"))
 
