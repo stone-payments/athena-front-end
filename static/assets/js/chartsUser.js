@@ -9,7 +9,7 @@ $(function() {
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
-$(".content").show();
+
 
   $('#name').autoComplete({
       minChars: 1,cache: false, delay : 20,
@@ -321,31 +321,61 @@ $(".content").show();
         if (work_profile != null) {
       work_profile.destroy();
     }
-    console.log(returnedData);
-    let labelsIssues1 = returnedData.map(function(num) {
-          return num;
+     let data = returnedData.map(function(data) {
+          return data[1];
         });
-console.log(labelsIssues1);
+     let labelNames = returnedData.map(function(data) {
+          return data[0]['author'];
+        });
     let ctx = document.getElementById("work_profile").getContext('2d');
+    var customTooltips = function (tooltip) {
+			$(this._chart.canvas).css("cursor", "pointer");
+
+			var positionY = this._chart.canvas.offsetTop;
+			var positionX = this._chart.canvas.offsetLeft;
+
+			$(".chartjs-tooltip").css({
+				opacity: 10,
+			});}
     work_profile = new Chart(ctx, {
     type: 'scatter',
     data: {
         datasets: [{
-            label: "dataset",
+            label: labelNames,
 			borderColor: '#17a589',
 			backgroundColor: '#17a589',
 			pointRadius: 9,
 			pointHoverRadius: 8,
-            data: returnedData
-        }]
+            data: data
+        }
+     ]
     },
     options: {
+    tooltips: {
+              mode: 'index',
+              intersect: true,
+			  callbacks: {
+                title: function(tooltipItem, data) {
+                console.log(returnedData[0]);
+                  return returnedData[tooltipItem[0]['index']][0]['author'];
+                },
+                beforeLabel: function(tooltipItem, data) {
+                  return 'Total commits: '+returnedData[tooltipItem['index']][0]['commits'];
+                },
+                label: function(tooltipItem, data) {
+                  return 'Total additions: '+returnedData[tooltipItem['index']][0]['additions'];
+                },
+                afterLabel: function(tooltipItem, data) {
+                  return 'Total deletions: '+returnedData[tooltipItem['index']][0]['deletions'];
+                },
+              },
+            },
     layout :{
     padding: {
-                left: 30,
-                right: 30,
-                top: 30,
-                bottom: 30
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10
             }
     },
             scales: {
@@ -354,7 +384,7 @@ console.log(labelsIssues1);
                 scaleLabel: {
                                 display: true,
                                 labelString: 'New Work',
-                                padding: 10,
+                                padding: 0,
                             },
                     ticks: {
                           min: -101,
@@ -372,7 +402,7 @@ console.log(labelsIssues1);
                 scaleLabel: {
                                 display: true,
                                 labelString: 'Code Refactoring',
-                                padding: 10,
+                                padding: 0,
                             },
                     ticks: {
                           min: -101,
@@ -393,7 +423,7 @@ console.log(labelsIssues1);
                 scaleLabel: {
                                 display: true,
                                 labelString: 'Higher Committer',
-                                padding: 10,
+                                padding: 0,
 
                             },
                     ticks: {
@@ -413,7 +443,7 @@ console.log(labelsIssues1);
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Lower Committer',
-                                padding: 10,
+                                padding: 0,
 
                             },
                     ticks: {
