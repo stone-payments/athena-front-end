@@ -321,6 +321,9 @@ $(function() {
         if (work_profile != null) {
       work_profile.destroy();
     }
+    let info = returnedData.map(function(data) {
+          return data[0];
+        });
      let data = returnedData.map(function(data) {
           return data[1];
         });
@@ -356,17 +359,16 @@ $(function() {
               intersect: true,
 			  callbacks: {
                 title: function(tooltipItem, data) {
-                console.log(returnedData[0]);
-                  return returnedData[tooltipItem[0]['index']][0]['author'];
+                  return info[tooltipItem[0]['index']]['author'];
                 },
                 beforeLabel: function(tooltipItem, data) {
-                  return 'Total commits: '+returnedData[tooltipItem['index']][0]['commits'];
+                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];
                 },
                 label: function(tooltipItem, data) {
-                  return 'Total additions: '+returnedData[tooltipItem['index']][0]['additions'];
+                  return 'Total additions: '+ info[tooltipItem['index']]['additions'];
                 },
                 afterLabel: function(tooltipItem, data) {
-                  return 'Total deletions: '+returnedData[tooltipItem['index']][0]['deletions'];
+                  return 'Total deletions: ' + info[tooltipItem['index']]['deletions'];
                 },
               },
             },
