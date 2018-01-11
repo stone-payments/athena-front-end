@@ -14,7 +14,7 @@ $(function() {
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
 
     $.ajax({
-          url: address+'/get_org_names',
+          url: '/get_org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -47,7 +47,7 @@ $(function() {
       lastDay = JSON.parse($("#org").val()).end;
     }
     $.ajax({
-      url: address+'/get_org_info?name=' + name,
+      url: '/get_org_info?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -87,7 +87,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_languages_org?name=' + name,
+      url: '/get_languages_org?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -151,7 +151,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_commits_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_commits_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -236,7 +236,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_open_source_org?name=' + name,
+      url: '/get_open_source_org?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -275,7 +275,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_readme_org?name=' + name,
+      url: '/get_readme_org?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -312,7 +312,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_open_source_readme_org?name=' + name,
+      url: '/get_open_source_readme_org?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -349,7 +349,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_license_type_org?name=' + name,
+      url: '/get_license_type_org?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -412,7 +412,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_issues_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_issues_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

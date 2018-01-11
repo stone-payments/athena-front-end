@@ -10,7 +10,7 @@ $(function() {
   }),
 
   $.ajax({
-          url: address+'/get_org_names',
+          url: '/get_org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -35,7 +35,7 @@ $(function() {
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-     $.getJSON(address+'/get_repo_name?name=' + term+'&org='+ orgSelector, function(result) {
+     $.getJSON('/get_repo_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.repoName;
         });
@@ -60,7 +60,7 @@ $(function() {
       lastDay = JSON.parse($("#repoRangeDate").val()).end;
     }
     $.ajax({
-      url: address+'/get_languages_repo?name=' + name+'&org='+ orgSelector,
+      url: '/get_languages_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -120,7 +120,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_commits_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: '/get_commits_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -203,7 +203,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_members_repo?name=' + name+'&org='+ orgSelector,
+      url: '/get_members_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -226,7 +226,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_best_practices_repo?name=' + name+'&org='+ orgSelector,
+      url: '/get_best_practices_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -275,7 +275,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_issues_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: '/get_issues_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

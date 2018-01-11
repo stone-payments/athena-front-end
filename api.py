@@ -1,14 +1,40 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from api_collections import *
 from api_configurations.config import *
 
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 CORS(app)
 
-with open("static/assets/js/configs.js", "w") as config_js:
-    config_js.write('let address = "'+os.getenv("API_URL")+'"')
+
+@app.route('/')
+@app.route('/orgs')
+@app.route('/index')
+def index():
+    user = {'username': 'stone-payments'}
+    return render_template('orgs.html', user=user)
+
+
+@app.route('/repos')
+def repos():
+    return render_template('repos.html')
+
+
+@app.route('/teams')
+def teams():
+    return render_template('teams.html')
+
+
+@app.route('/user')
+def users():
+    user = {'username': 'maiaPhilippe'}
+    return render_template('user.html', user=user)
+
+
+@app.route('/tv')
+def tv():
+    return render_template('tv.html')
 
 # Repos #####
 

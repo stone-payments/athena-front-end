@@ -15,7 +15,7 @@ $(function() {
       minChars: 1,cache: false, delay : 20,
       source: function(term, response) {
       $('.autocomplete-suggestion').show();
-       $.getJSON(address+'/get_user_login?name=' + term, function(result) {
+       $.getJSON('/get_user_login?name=' + term, function(result) {
           let returnedData = result.map(function(num) {
             return num.login;
           });
@@ -26,7 +26,9 @@ $(function() {
          $('#find').click();
     }
     });
-
+    if ($("#name").value != ''){
+        $('#find').click();
+   }
   $('#name').keypress(function(e) {
     if (e.which == 13) { //Enter key pressed
     $('.autocomplete-suggestion').hide();
@@ -41,7 +43,7 @@ $(function() {
       lastDay = JSON.parse($("#userRangeDate").val()).end;
     }
     $.ajax({
-      url: address+'/get_avatar?login=' + name,
+      url: '/get_avatar?login=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -78,7 +80,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -160,7 +162,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -183,7 +185,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_user_team?name=' + name,
+      url: '/get_user_team?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -210,7 +212,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -314,7 +316,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

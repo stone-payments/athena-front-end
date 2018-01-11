@@ -15,7 +15,7 @@ $(function() {
   ]
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
     $.ajax({
-              url: address+'/get_org_names',
+              url: '/get_org_names',
               type: 'GET',
               success: function(response) {
                 returnedData = JSON.parse(response);
@@ -37,7 +37,7 @@ $(function() {
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-     $.getJSON(address+'/get_team_name?name=' + term+'&org='+ orgSelector, function(result) {
+     $.getJSON('/get_team_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.slug;
         });
@@ -63,7 +63,7 @@ $(function() {
       lastDay = JSON.parse($("#teamsRangeDate").val()).end;
     }
     $.ajax({
-      url: address+'/team_check_with_exist?org=' + orgSelector + '&name=' + name,
+      url: '/team_check_with_exist?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -92,7 +92,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_open_source_team?org=' + orgSelector + '&name=' + name,
+      url: '/get_open_source_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -126,7 +126,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_readme_team?org=' + orgSelector + '&name=' + name,
+      url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -160,7 +160,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_license_type_team?org=' + orgSelector + '&name=' + name,
+      url: '/get_license_type_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -191,7 +191,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_languages_team?org=' + orgSelector + '&name=' + name,
+      url: '/get_languages_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -251,7 +251,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_repo_members_team?org=' + 'stone-payments' + '&name=' + name,
+      url: '/get_repo_members_team?org=' + 'stone-payments' + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -274,7 +274,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -357,7 +357,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: address+'/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
