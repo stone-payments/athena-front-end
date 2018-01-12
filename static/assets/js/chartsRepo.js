@@ -22,6 +22,13 @@ $(function() {
                  .attr("value",name.org)
                  .text(name.org));
             });
+            if ($("#name").data("name") != 'None'){
+            let name = $("#name").data("name");
+            let org = $("#name").data("org");
+            $('#orgSelector ').val(org).change();
+            $("#name").val(name);
+            $('#find').click();
+           };
           },
           error: function(error) {
             console.log(error);
@@ -73,6 +80,7 @@ $(function() {
         if (pieChart != null) {
           pieChart.destroy();
         }
+        if (labels.length > 3){
         pieChart = new Chart(document.getElementById("pie-chart"), {
           type: 'bar',
           data: {
@@ -114,6 +122,24 @@ $(function() {
             }
           }
         });
+        }
+        else{
+        pieChart = new Chart(document.getElementById("pie-chart"), {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Languages (%)",
+              backgroundColor: [ 'rgb(12, 58, 31)', 'rgb(18, 170, 75)', 'rgb(149, 201, 61)'],
+              borderWidth: 1,
+              data: dataSize
+            }]
+          },
+          options: {
+            responsive: true
+          }
+        });
+        }
       },
       error: function(error) {
         console.log(error);
@@ -210,8 +236,8 @@ $(function() {
         $("#members").empty();
         returnedData.map(function(num) {
           memberName = num;
-          html = `<tr>
-                        <td style="width:10px;">
+          html = `<tr class="elements-list" onclick="window.location='/user?name=${memberName}';" style="cursor: pointer;">
+                        <td  style="width:10px;">
                                 <i class="pe-7s-angle-right-circle"></i>
                         </td>
                         <td>${memberName}</td>

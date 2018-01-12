@@ -171,6 +171,10 @@ input:focus {
   -ms-transition: all 100ms ease-in;
   transition: all 100ms ease-in; }
 
+.elements-list:hover{
+    background-color: #f8f8f9;
+}
+
 .fa {
   width: 18px;
   text-align: center; }

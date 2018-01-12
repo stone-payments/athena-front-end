@@ -27,6 +27,13 @@ $(function() {
                      .attr("value",name.org)
                      .text(name.org));
                 });
+                if ($("#name").data("name") != 'None'){
+                    let name = $("#name").data("name");
+                    let org = $("#name").data("org");
+                    $('#orgSelector ').val(org).change();
+                    $("#name").val(name);
+                    $('#find').click();
+                   };
               },
               error: function(error) {
                 console.log(error);
@@ -258,7 +265,7 @@ $(function() {
         $("#members").empty();
         returnedData.map(function(num) {
           memberName = num.member;
-          html = `<tr>
+          html = `<tr class="elements-list" onclick="window.location='/user?name=${memberName}';" style="cursor: pointer;">
                         <td style="width:10px;">
                                 <i class="pe-7s-angle-right-circle"></i>
                         </td>

@@ -26,9 +26,8 @@ $(function() {
          $('#find').click();
     }
     });
-    if ($("#name").value != ''){
-        $('#find').click();
-   }
+
+
   $('#name').keypress(function(e) {
     if (e.which == 13) { //Enter key pressed
     $('.autocomplete-suggestion').hide();
@@ -168,13 +167,25 @@ $(function() {
         returnedData = JSON.parse(response);
         $("#contributed_repo").empty();
         returnedData.map(function(num) {
-          memberName = num;
-          html = `<tr>
+          repoName = num.repoName;
+          org = num.org;
+//          html = `<tr class="elements-list" onclick="window.location='/repos?name=${repoName}';" style="cursor: pointer;">
+//                        <td style="width:10px;">
+//                                <i class="pe-7s-angle-right-circle"></i>
+//                        </td>
+//                        <td>${repoName}</td>
+//                        <td class="td-actions text-right">
+//                        </td>
+//                    </tr>`
+           html =   `<tr class="elements-list" onclick="window.location='/repos?org=${org}&name=${repoName}';" style="cursor: pointer;">
                         <td style="width:10px;">
                                 <i class="pe-7s-angle-right-circle"></i>
                         </td>
-                        <td>${memberName}</td>
+                        <td>${repoName}
+
+                        </td>
                         <td class="td-actions text-right">
+                        <span class="label label-success">${org}</span>
                         </td>
                     </tr>`
           $("#contributed_repo").append(html);
@@ -471,4 +482,9 @@ $(function() {
 
       $(".content").show();
   });
+  if ($("#name").data("myval") != 'None'){
+    let name = $("#name").data("myval");
+    $("#name").val(name);
+    $('#find').click();
+   };
 });

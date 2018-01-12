@@ -65,21 +65,6 @@ $(function() {
         $('#teamsCount').text(teamsCount);
         $('#projectCount').text(projectCount);
         $('#orgLastUpdated').html('<i class="fa fa-clock-o"></i> '+ orgLastUpdated + ' minutes ago');
-//        if (following == '-'){
-//          $(".content").hide();
-//          $(document).ready(function() {
-//        		$.notify({
-//        			icon: 'pe-7s-close-circle',
-//        			message: "User does not exist"
-//        		}, {
-//        			type: 'danger',
-//        			timer: 4000
-//        		});
-//        	});
-//        }
-//        else {
-//          $(".content").show();
-//        }
       },
 
       error: function(error) {

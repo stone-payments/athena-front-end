@@ -18,17 +18,27 @@ def index():
 
 @app.route('/repos')
 def repos():
-    return render_template('repos.html')
+    org_name = request.args.get('org', default="None")
+    repository_name = request.args.get('name', default="None")
+    repo = {'name': repository_name}
+    org = {'name': org_name}
+    print(org)
+    return render_template('repos.html', repo=repo, org=org)
 
 
 @app.route('/teams')
 def teams():
-    return render_template('teams.html')
+    org_name = request.args.get('org', default="None")
+    team = request.args.get('name', default="None")
+    team = {'name': team}
+    org = {'name': org_name}
+    return render_template('teams.html', team=team, org=org)
 
 
 @app.route('/user')
 def users():
-    user = {'username': 'maiaPhilippe'}
+    user_name = request.args.get('name', default="None")
+    user = {'username': user_name}
     return render_template('user.html', user=user)
 
 
