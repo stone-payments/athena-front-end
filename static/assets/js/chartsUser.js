@@ -169,14 +169,6 @@ $(function() {
         returnedData.map(function(num) {
           repoName = num.repoName;
           org = num.org;
-//          html = `<tr class="elements-list" onclick="window.location='/repos?name=${repoName}';" style="cursor: pointer;">
-//                        <td style="width:10px;">
-//                                <i class="pe-7s-angle-right-circle"></i>
-//                        </td>
-//                        <td>${repoName}</td>
-//                        <td class="td-actions text-right">
-//                        </td>
-//                    </tr>`
            html =   `<tr class="elements-list" onclick="window.location='/repos?org=${org}&name=${repoName}';" style="cursor: pointer;">
                         <td style="width:10px;">
                                 <i class="pe-7s-angle-right-circle"></i>
@@ -202,13 +194,14 @@ $(function() {
         returnedData = JSON.parse(response);
         $("#user_teams").empty();
         returnedData.map(function(num) {
-          memberName = num.teamName;
+          teamName = num.teamName;
           org = num.org;
-          html =   `<tr>
+          slug = num.slug;
+          html =   `<tr class="elements-list" onclick="window.location='/teams?org=${org}&name=${slug}';" style="cursor: pointer;">
                         <td style="width:10px;">
                                 <i class="pe-7s-angle-right-circle"></i>
                         </td>
-                        <td>${memberName}
+                        <td>${teamName}
 
                         </td>
                         <td class="td-actions text-right">

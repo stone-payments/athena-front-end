@@ -98,6 +98,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (openSourceChart != null) {
+          openSourceChart.destroy();
+        }
     $.ajax({
       url: '/get_open_source_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
@@ -109,9 +112,7 @@ $(function() {
         let dataSize = returnedData.map(function(num) {
           return num.count;
         });
-        if (openSourceChart != null) {
-          openSourceChart.destroy();
-        }
+
         openSourceChart = new Chart(document.getElementById("openSourceChart"), {
           type: 'doughnut',
           data: {
@@ -132,6 +133,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (readmeChart != null) {
+          readmeChart.destroy();
+        }
     $.ajax({
       url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
@@ -143,9 +147,7 @@ $(function() {
         let dataSize = returnedData.map(function(num) {
           return num.count;
         });
-        if (readmeChart != null) {
-          readmeChart.destroy();
-        }
+
         readmeChart = new Chart(document.getElementById("readmeChart"), {
           type: 'doughnut',
           data: {
@@ -166,6 +168,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (LicenseType != null) {
+          LicenseType.destroy();
+        }
     $.ajax({
       url: '/get_license_type_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
@@ -177,9 +182,7 @@ $(function() {
         let dataLicense = returnedData.map(function(num) {
           return num.count;
         });
-        if (LicenseType != null) {
-          LicenseType.destroy();
-        }
+
         LicenseType = new Chart(document.getElementById("LicenseType"), {
           type: 'doughnut',
           data: {
@@ -197,6 +200,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (languages != null) {
+          languages.destroy();
+        }
     $.ajax({
       url: '/get_languages_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
@@ -208,9 +214,7 @@ $(function() {
         let dataSize = returnedData.map(function(num) {
           return num.count;
         });
-        if (languages != null) {
-          languages.destroy();
-        }
+
         languages = new Chart(document.getElementById("languages"), {
           type: 'bar',
           data: {
@@ -258,7 +262,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_repo_members_team?org=' + 'stone-payments' + '&name=' + name,
+      url: '/get_repo_members_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -280,6 +284,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (commitsChart != null) {
+          commitsChart.destroy();
+        }
     $.ajax({
       url: '/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
@@ -293,9 +300,6 @@ $(function() {
         });
         let ctx = document.getElementById("commitsChart").getContext('2d');
 
-        if (commitsChart != null) {
-          commitsChart.destroy();
-        }
         commitsChart = new Chart(ctx, {
           type: 'line',
           data: {
@@ -363,6 +367,9 @@ $(function() {
         console.log(error);
       }
     });
+    if (issuesChart != null) {
+          issuesChart.destroy();
+        }
     $.ajax({
       url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
@@ -378,9 +385,7 @@ $(function() {
           return num.count;
         });
         let ctx = document.getElementById("issuesChart").getContext('2d');
-        if (issuesChart != null) {
-          issuesChart.destroy();
-        }
+
         issuesChart = new Chart(ctx, {
           type: 'line',
           data: {
