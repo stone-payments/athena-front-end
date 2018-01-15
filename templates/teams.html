@@ -9,6 +9,7 @@
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 	<meta name="viewport" content="width=device-width" />
 	<link rel="stylesheet" href="static/assets/css/jquery.auto-complete.css">
+
 	<!-- date-picker   -->
 	<link href="static/assets/css/jquery.comiseo.daterangepicker.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
@@ -24,6 +25,7 @@
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
 	<link href="static/assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
+	<link href="static/assets/css/spinner.css" rel="stylesheet">
 </head>
 
 <body>
@@ -79,6 +81,7 @@
 			</nav>
 			<nav class="navbar navbar-default navbar-fixed">
 				<div class="container-fluid">
+
 					<div class="navbar-header">
 						<a class="navbar-brand">
 											<select id="orgSelector">
@@ -100,7 +103,8 @@
 								<div class="content">
 									<div class="table-full-width">
 										<table class="table">
-											<canvas id="openSourceChart" class="ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
+											<div id="openSourceChartSpinner" class="spinnercss"></div>
+											<canvas id="openSourceChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
 
 										</table>
 									</div>
@@ -119,7 +123,8 @@
 								<div class="content">
 									<div class="table-full-width">
 										<table class="table">
-											<canvas id="readmeChart" class="ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
+											<div id="readmeSpinner" class="spinnercss"></div>
+											<canvas id="readmeChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
 
 										</table>
 									</div>
@@ -138,8 +143,8 @@
 								<div class="content" style="max-height:500px">
 									<div class="table-full-width">
 										<table class="table">
-											<canvas id="LicenseType" class="ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
-
+											<div id="licenseSpinner" class="spinnercss"></div>
+											<canvas id="LicenseType" class="display-none ct-chart ct-perfect-fourth" width="auto" height="150"></canvas>
 										</table>
 									</div>
 									<div class="footer">
@@ -157,8 +162,14 @@
 									<h4 class="title">Commits</h4>
 									<p class="category">Commits - Team</p>
 								</div>
-								<div class="content">
-									<canvas id="commitsChart" class="ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+								<div class="content" style="max-height:500px">
+									<div class="table-full-width">
+										<table class="table">
+											<div id="commitsSpinner" class="spinnercss"></div>
+											<canvas id="commitsChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+										</table>
+									</div>
+
 									<div class="footer">
 										<hr>
 									</div>
@@ -175,6 +186,7 @@
 								<div class="content-members">
 									<div class="table-full-width">
 										<table class="table">
+											<div id="memberSpinner" class="spinnercss"></div>
 											<tbody id="members">
 											</tbody>
 										</table>
@@ -192,7 +204,8 @@
 									<p class="category">Top 12 Languages - Team (%)</p>
 								</div>
 								<div class="content">
-									<canvas id="languages" class="ct-chart ct-perfect-fourth" width="auto" height="100"></canvas>
+									<div id="languageSpinner" class="spinnercss"></div>
+									<canvas id="languages" class="display-none ct-chart ct-perfect-fourth" width="auto" height="100"></canvas>
 									<div class="footer">
 										<hr>
 									</div>
@@ -202,13 +215,15 @@
 
 
 						<div class="col-md-8 col-lg-12 .col-xl-8">
+
 							<div class="card ">
 								<div class="header">
 									<h4 class="title">Issues</h4>
 									<p class="category">Issues - Team</p>
 								</div>
 								<div class="content">
-									<canvas id="issuesChart" class="ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+									<div id="issuesSpinner" class="spinnercss"></div>
+									<canvas id="issuesChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
 									<div class="footer">
 										<div class="legend">
 										</div>
@@ -222,6 +237,7 @@
 			</div>
 			<footer class="footer">
 				<div class="container-fluid">
+
 					<nav class="pull-left">
 					</nav>
 				</div>

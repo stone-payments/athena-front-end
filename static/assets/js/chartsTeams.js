@@ -14,6 +14,30 @@ $(function() {
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
+  spinner = `<div class="windows8">
+                <div class="wBall" id="wBall_1">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_2">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_3">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_4">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_5">
+                    <div class="wInnerBall"></div>
+                </div>
+            </div>`
+    $("#openSourceChartSpinner").html(spinner);
+    $("#readmeSpinner").html(spinner);
+    $("#licenseSpinner").html(spinner);
+    $("#commitsSpinner").html(spinner);
+    $("#memberSpinner").html(spinner);
+    $("#languageSpinner").html(spinner);
+    $("#issuesSpinner").html(spinner);
     $.ajax({
               url: '/get_org_names',
               type: 'GET',
@@ -104,6 +128,9 @@ $(function() {
     $.ajax({
       url: '/get_open_source_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+       beforeSend: function() {
+         $("#openSourceChartSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labels = returnedData.map(function(num) {
@@ -128,6 +155,7 @@ $(function() {
             responsive: true
           }
         });
+        $("#openSourceChartSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -139,6 +167,9 @@ $(function() {
     $.ajax({
       url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+         $("#readmeSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labels = returnedData.map(function(num) {
@@ -163,6 +194,7 @@ $(function() {
             responsive: true
           }
         });
+        $("#readmeSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -174,6 +206,9 @@ $(function() {
     $.ajax({
       url: '/get_license_type_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+         $("#licenseSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labelsLicense = returnedData.map(function(num) {
@@ -195,6 +230,7 @@ $(function() {
             }]
           },
         });
+        $("#licenseSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -206,6 +242,9 @@ $(function() {
     $.ajax({
       url: '/get_languages_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+         $("#languageSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labels = returnedData.map(function(num) {
@@ -256,6 +295,7 @@ $(function() {
             }
           }
         });
+        $("#languageSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -264,9 +304,13 @@ $(function() {
     $.ajax({
       url: '/get_repo_members_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+         $("#members").empty();
+         $("#memberSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
-        $("#members").empty();
+
         returnedData.map(function(num) {
           memberName = num.member;
           html = `<tr class="elements-list" onclick="window.location='/user?name=${memberName}';" style="cursor: pointer;">
@@ -279,6 +323,7 @@ $(function() {
                     </tr>`
           $("#members").append(html);
         });
+        $("#memberSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -290,6 +335,9 @@ $(function() {
     $.ajax({
       url: '/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
+      beforeSend: function() {
+         $("#commitsSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labelsCommit = returnedData.map(function(num) {
@@ -362,6 +410,7 @@ $(function() {
             }
           },
         });
+         $("#commitsSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);
@@ -373,6 +422,9 @@ $(function() {
     $.ajax({
       url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
+      beforeSend: function() {
+         $("#issuesSpinner").css('display', 'flex')
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
         let labelsIssues1 = returnedData[0].map(function(num) {
@@ -466,6 +518,7 @@ $(function() {
             },
           }
         });
+        $("#issuesSpinner").css('display', 'none')
       },
       error: function(error) {
         console.log(error);

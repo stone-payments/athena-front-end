@@ -12,7 +12,23 @@ $(function() {
     '#fef5e7', '#fdebd0', '#fad7a0', '#f8c471', '#f5b041', '#f39c12', '#d68910', '#b9770e', '#9c640c', '#7e5109'
   ]
   colorStone = ['#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421']
-
+  let spinner = `<div class="spinner">
+                <div class="wBall" id="wBall_1">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_2">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_3">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_4">
+                    <div class="wInnerBall"></div>
+                </div>
+                <div class="wBall" id="wBall_5">
+                    <div class="wInnerBall"></div>
+                </div>
+            </div>`
     $.ajax({
           url: '/get_org_names',
           type: 'GET',
@@ -231,8 +247,6 @@ $(function() {
         let dataCommits = returnedData.map(function(num) {
           return num.count;
         });
-//        let openSource = Number(returnedData[0]['openSource']);
-//        let notOpenSource = Number(returnedData[0]['notOpenSource']);
         if (openSourceChart != null) {
           openSourceChart.destroy();
         }
