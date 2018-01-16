@@ -162,10 +162,4 @@ out
 gen
 .idea/misc.xml
 .idea/modules.xml
-Procfile
-__init__.py
-api.py
-api_collections/
-requirements.txt
-run.py
-static/
+
