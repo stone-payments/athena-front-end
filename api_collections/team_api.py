@@ -1,5 +1,5 @@
 from operator import itemgetter
-
+from bson import json_util
 from api_client.client import *
 from api_modules.module import *
 
@@ -190,8 +190,8 @@ def team_repo_members(db):
     org = request.args.get("org")
     name = request.args.get("name")
     query = [
-        {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Dev'}}
-        , {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Teams'}},
+        {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Teams'}},
+        {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Dev'}},
         {
             '$match':
                 {'Teams.0.slug': name, 'type': 'dev_to_team', 'Teams.0.org': org}},
@@ -285,6 +285,7 @@ def issues_team(db):
 
 
 def team_new_work(db):
+    org = request.args.get("org")
     name = request.args.get("name")
     start_date = start_day_string_time()
     end_date = end_date_string_time()
@@ -292,7 +293,7 @@ def team_new_work(db):
              {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
              {
                  '$match':
-                     {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': 'stone-payments'}
+                     {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
              },
              {'$project': {"_id": 0, 'Devs': 1}},
              {'$lookup': {'from': 'edges', 'localField': 'Devs._id', 'foreignField': 'from', 'as': 'Commit2'}},
@@ -320,7 +321,7 @@ def team_new_work(db):
               {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
               {
                   '$match':
-                      {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': 'stone-payments'}
+                      {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
               },
               {'$project': {"_id": 0, 'Devs': 1}},
               {'$lookup': {'from': 'edges', 'localField': 'Devs._id', 'foreignField': 'from', 'as': 'Commit2'}},
