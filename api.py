@@ -2,10 +2,13 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from api_collections import *
 from api_configurations.config import *
+from api_client.mongo_client import *
 
 
 app = Flask(__name__)
 CORS(app)
+mongo = Mongraph(db_name=db_name, db_url=db_url, username=username, password=password, auth_mechanism=auth_mechanism)
+db = mongo.connect()
 
 
 @app.route('/')
