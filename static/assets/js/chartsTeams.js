@@ -166,7 +166,167 @@ $(function() {
         console.log(error);
       }
     });
+    $.ajax({
+      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      type: 'GET',
+      beforeSend: function() {
+      if (work_profile != null) {
+          work_profile.destroy();
+        }
+         $("#newWorkSpinner").css('display', 'flex')
+      },
 
+      success: function(response) {
+        returnedData = JSON.parse(response);
+
+    let info = returnedData.map(function(data) {
+          return data[0];
+        });
+     let data = returnedData.map(function(data) {
+          return data[1];
+        });
+     let labelNames = returnedData.map(function(data) {
+          return data[0]['author'];
+        });
+    let ctx = document.getElementById("work_profile").getContext('2d');
+    var customTooltips = function (tooltip) {
+			$(this._chart.canvas).css("cursor", "pointer");
+
+			var positionY = this._chart.canvas.offsetTop;
+			var positionX = this._chart.canvas.offsetLeft;
+
+			$(".chartjs-tooltip").css({
+				opacity: 10,
+			});}
+    work_profile = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: name,
+			pointBackgroundColor: randomColor({count: labelNames.length, seed: 11}),
+            pointBorderColor: randomColor({count: labelNames.length, seed: 11}),
+			pointRadius: 9,
+			pointHoverRadius: 8,
+            data: data
+        },
+     ]
+    },
+    options: {
+    tooltips: {
+              mode: 'index',
+              intersect: true,
+			  callbacks: {
+                title: function(tooltipItem, data) {
+                  return info[tooltipItem[0]['index']]['author'];
+                },
+                beforeLabel: function(tooltipItem, data) {
+                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];
+                },
+                label: function(tooltipItem, data) {
+                  return 'Total additions: '+ info[tooltipItem['index']]['additions'];
+                },
+                afterLabel: function(tooltipItem, data) {
+                  return 'Total deletions: ' + info[tooltipItem['index']]['deletions'];
+                },
+              },
+            },
+    layout :{
+    padding: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10
+            }
+    },
+            scales: {
+                xAxes: [{
+                id: "x-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'New Work',
+                                padding: 0,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false,
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'top'
+                },
+                {
+                id: "x-axis-2",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Code Refactoring',
+                                padding: 0,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'bottom'
+                }
+                ],
+                yAxes: [{
+                display: true,
+                position: 'right',
+                id: "y-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Higher Committer',
+                                padding: 0,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                },
+                {
+                display: true,
+                position: 'left',
+                id: "y-axis-2",
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Lower Committer',
+                                padding: 0,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                }]
+            }
+        }
+    });
+      },
+      complete: function (data) {
+          $("#newWorkSpinner").css('display', 'none')
+         },
+      error: function(error) {
+        console.log(error);
+      }
+    });
     $.ajax({
       url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
@@ -546,170 +706,7 @@ $(function() {
         console.log(error);
       }
     });
-    $.ajax({
-      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
-      type: 'GET',
-      beforeSend: function() {
-      if (work_profile != null) {
-          work_profile.destroy();
-        }
-         $("#newWorkSpinner").css('display', 'flex')
-      },
 
-      success: function(response) {
-        returnedData = JSON.parse(response);
-
-    let info = returnedData.map(function(data) {
-          return data[0];
-        });
-     let data = returnedData.map(function(data) {
-          return data[1];
-        });
-     let labelNames = returnedData.map(function(data) {
-          return data[0]['author'];
-        });
-     let colors = returnedData.map(function(data) {
-          return randomColor();
-        });
-    let ctx = document.getElementById("work_profile").getContext('2d');
-    var customTooltips = function (tooltip) {
-			$(this._chart.canvas).css("cursor", "pointer");
-
-			var positionY = this._chart.canvas.offsetTop;
-			var positionX = this._chart.canvas.offsetLeft;
-
-			$(".chartjs-tooltip").css({
-				opacity: 10,
-			});}
-    work_profile = new Chart(ctx, {
-    type: 'scatter',
-    data: {
-        datasets: [{
-            label: name,
-			pointBackgroundColor: colors,
-            pointBorderColor: colors,
-			pointRadius: 9,
-			pointHoverRadius: 8,
-            data: data
-        },
-     ]
-    },
-    options: {
-    tooltips: {
-              mode: 'index',
-              intersect: true,
-			  callbacks: {
-                title: function(tooltipItem, data) {
-                  return info[tooltipItem[0]['index']]['author'];
-                },
-                beforeLabel: function(tooltipItem, data) {
-                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];
-                },
-                label: function(tooltipItem, data) {
-                  return 'Total additions: '+ info[tooltipItem['index']]['additions'];
-                },
-                afterLabel: function(tooltipItem, data) {
-                  return 'Total deletions: ' + info[tooltipItem['index']]['deletions'];
-                },
-              },
-            },
-    layout :{
-    padding: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10
-            }
-    },
-            scales: {
-                xAxes: [{
-                id: "x-axis-1",
-                scaleLabel: {
-                                display: true,
-                                labelString: 'New Work',
-                                padding: 0,
-                            },
-                    ticks: {
-                          min: -101,
-                          max: 101,
-                          display: false,
-                        },
-                    gridLines: {
-                                drawBorder: true,
-                                color: 'rgba(18, 170, 75, 0.1)',
-                            },
-                    position: 'top'
-                },
-                {
-                id: "x-axis-2",
-                scaleLabel: {
-                                display: true,
-                                labelString: 'Code Refactoring',
-                                padding: 0,
-                            },
-                    ticks: {
-                          min: -101,
-                          max: 101,
-                          display: false
-                        },
-                    gridLines: {
-                                drawBorder: true,
-                                color: 'rgba(18, 170, 75, 0.1)',
-                            },
-                    position: 'bottom'
-                }
-                ],
-                yAxes: [{
-                display: true,
-                position: 'right',
-                id: "y-axis-1",
-                scaleLabel: {
-                                display: true,
-                                labelString: 'Higher Committer',
-                                padding: 0,
-
-                            },
-                    ticks: {
-                          min: -101,
-                          max: 101,
-                          display: false
-                        },
-                  gridLines: {
-                                drawBorder: true,
-                                color: 'rgba(18, 170, 75, 0.1)'
-                            },
-                },
-                {
-                display: true,
-                position: 'left',
-                id: "y-axis-2",
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Lower Committer',
-                                padding: 0,
-
-                            },
-                    ticks: {
-                          min: -101,
-                          max: 101,
-                          display: false
-                        },
-                  gridLines: {
-                                drawBorder: true,
-                                color: 'rgba(18, 170, 75, 0.1)'
-                            },
-                }]
-            }
-        }
-    });
-      },
-      complete: function (data) {
-          $("#newWorkSpinner").css('display', 'none')
-         },
-      error: function(error) {
-        console.log(error);
-      }
-    });
     $(".content").show();
   });
 });
