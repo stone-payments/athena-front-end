@@ -84,6 +84,8 @@ def team_commits(db):
     org = request.args.get("org")
     start_date = dt.datetime.strptime(request.args.get("startDate"), '%Y-%m-%d')
     end_date = dt.datetime.strptime(request.args.get("endDate"), '%Y-%m-%d') + dt.timedelta(seconds=86399)
+    print(start_date)
+    print(end_date)
     query = [
         {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
         {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
@@ -284,9 +286,21 @@ def issues_team(db):
 
 
 def team_new_work(db):
+    def merge_lists(l1, l2, key):
+        merged = {}
+        for item in l1 + l2:
+            if item[key] in merged:
+                merged[item[key]].update(item)
+            else:
+                merged[item[key]] = item
+        return [val for (_, val) in merged.items()]
     org = request.args.get("org")
     name = request.args.get("name")
+    # org = 'stone-payments'
+    # name = 'plataforma'
     start_date = start_day_string_time()
+    # start_date = dt.datetime.strptime('2017-09-01', '%Y-%m-%d')
+    # end_date = dt.datetime.strptime('2018-01-10', '%Y-%m-%d')
     end_date = end_date_string_time()
     query = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
              {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
@@ -355,24 +369,23 @@ def team_new_work(db):
               {'$project': {"_id": 0, 'author': '$_id.author', 'totalAmount': '$totalAmount'}}
               ]
 
-    # delta = end_date - start_date
-    commits_count_list = query_aggregate_to_dictionary(db, 'Commit', query)
-    total_days_count = query_aggregate_to_dictionary(db, 'Commit', query2)
-    print(total_days_count)
+    commits_count_list = query_aggregate_to_dictionary(db, 'edges', query)
+    total_days_count = query_aggregate_to_dictionary(db, 'edges', query2)
+    lista = merge_lists(commits_count_list, total_days_count, 'author')
     all_days = [start_date + dt.timedelta(days=x) for x in range((end_date - start_date).days + 1)]
     working_days = sum(1 for d in all_days if d.weekday() < 5)
-    print(working_days)
-    if not commits_count_list:
-        return json.dumps([[{'author': name, 'commits': 0, 'additions': 0, 'deletions': 0}, {'x': -100, 'y': -100}]])
-    commits_ratio = int((total_days_count / working_days - 0.5) * 2 * 100)
-    soma = commits_count_list[0]['additions'] + commits_count_list[0]['deletions']
-    addittions_deletions_ratio = int((commits_count_list[0]['additions'] / soma - commits_count_list[0]['deletions'] /
-                                      soma) * 100)
-    [[{'author': name, 'commits': commits_count_list[0]['commits'],
-       'additions': commits_count_list[0]['additions'], 'deletions':
-           commits_count_list[0]['deletions']}, {'x': commits_ratio,
-                                                 'y': addittions_deletions_ratio}]]
-    # return json.dumps([[{'author': name, 'commits': commits_count_list[0]['commits'],
-    #                      'additions': commits_count_list[0]['additions'], 'deletions':
-    #                          commits_count_list[0]['deletions']}, {'x': commits_ratio,
-    #                                                                'y': addittions_deletions_ratio}]])
+    response = []
+    for user in lista:
+        commits_ratio = int((user['totalAmount'] / working_days - 0.5) * 2 * 100)
+        if commits_ratio >= 100:
+            commits_ratio = 100
+        value_result = user['additions'] - user['deletions']
+        if value_result >= 0 and user['additions'] > 0:
+            additions_deletions_ratio = int((value_result / user['additions'] - 0.5) * 200)
+        else:
+            additions_deletions_ratio = -100
+        response.append([{'author': user['author'], 'commits': user['commits'], 'additions': user['additions'],
+                         'deletions': user['deletions']}, {'x': commits_ratio, 'y': additions_deletions_ratio}])
+    return json.dumps(response)
+
+

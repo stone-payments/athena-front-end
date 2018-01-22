@@ -162,6 +162,8 @@ def new_work(db):
     if not commits_count_list:
         return json.dumps([[{'author': name, 'commits': 0, 'additions': 0, 'deletions': 0}, {'x': -100, 'y': 0}]])
     commits_ratio = int((total_days_count / working_days - 0.5) * 2 * 100)
+    if commits_ratio >= 100:
+        commits_ratio = 100
     value_result = commits_count_list[0]['additions'] - commits_count_list[0]['deletions']
     if value_result >= 0:
         addittions_deletions_ratio = int((value_result / commits_count_list[0]['additions'] - 0.5) * 200)

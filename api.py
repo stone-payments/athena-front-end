@@ -173,6 +173,11 @@ def get_issues_team():
 @app.route('/get_team_name')
 def get_team_name():
     return team_name(db)
+
+
+@app.route('/get_team_new_work')
+def get_team_new_work():
+    return team_new_work(db)
 # Users #########################
 
 

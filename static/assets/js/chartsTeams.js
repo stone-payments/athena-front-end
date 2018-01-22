@@ -1,5 +1,6 @@
 $(function() {
   let commitsChart = null;
+  let work_profile = null;
   let languages = null;
   let issuesChart = null;
   let openSourceChart = null;
@@ -38,6 +39,7 @@ $(function() {
     $("#memberSpinner").html(spinner);
     $("#languageSpinner").html(spinner);
     $("#issuesSpinner").html(spinner);
+    $("#newWorkSpinner").html(spinner);
     $.ajax({
               url: '/get_org_names',
               type: 'GET',
@@ -122,13 +124,14 @@ $(function() {
         console.log(error);
       }
     });
-    if (openSourceChart != null) {
-          openSourceChart.destroy();
-        }
+
     $.ajax({
       url: '/get_open_source_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
        beforeSend: function() {
+       if (openSourceChart != null) {
+          openSourceChart.destroy();
+        }
          $("#openSourceChartSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -155,19 +158,22 @@ $(function() {
             responsive: true
           }
         });
-        $("#openSourceChartSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#openSourceChartSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
     });
-    if (readmeChart != null) {
-          readmeChart.destroy();
-        }
+
     $.ajax({
       url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
+       if (readmeChart != null) {
+          readmeChart.destroy();
+        }
          $("#readmeSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -194,19 +200,22 @@ $(function() {
             responsive: true
           }
         });
-        $("#readmeSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#readmeSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
     });
-    if (LicenseType != null) {
-          LicenseType.destroy();
-        }
+
     $.ajax({
       url: '/get_license_type_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
+      if (LicenseType != null) {
+          LicenseType.destroy();
+        }
          $("#licenseSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -230,19 +239,22 @@ $(function() {
             }]
           },
         });
-        $("#licenseSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#licenseSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
     });
-    if (languages != null) {
-          languages.destroy();
-        }
+
     $.ajax({
       url: '/get_languages_team?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
+      if (languages != null) {
+          languages.destroy();
+        }
          $("#languageSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -295,8 +307,10 @@ $(function() {
             }
           }
         });
-        $("#languageSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#languageSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
@@ -323,19 +337,22 @@ $(function() {
                     </tr>`
           $("#members").append(html);
         });
-        $("#memberSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#memberSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
     });
-    if (commitsChart != null) {
-          commitsChart.destroy();
-        }
+
     $.ajax({
       url: '/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
+      if (commitsChart != null) {
+          commitsChart.destroy();
+        }
          $("#commitsSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -410,19 +427,22 @@ $(function() {
             }
           },
         });
-         $("#commitsSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#commitsSpinner").css('display', 'none');
+         },
       error: function(error) {
         console.log(error);
       }
     });
-    if (issuesChart != null) {
-          issuesChart.destroy();
-        }
+
     $.ajax({
       url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
+      if (issuesChart != null) {
+          issuesChart.destroy();
+        }
          $("#issuesSpinner").css('display', 'flex')
       },
       success: function(response) {
@@ -518,8 +538,174 @@ $(function() {
             },
           }
         });
-        $("#issuesSpinner").css('display', 'none')
       },
+      complete: function (data) {
+           $("#issuesSpinner").css('display', 'none');
+         },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+    $.ajax({
+      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      type: 'GET',
+      beforeSend: function() {
+      if (work_profile != null) {
+          work_profile.destroy();
+        }
+         $("#newWorkSpinner").css('display', 'flex')
+      },
+
+      success: function(response) {
+        returnedData = JSON.parse(response);
+
+    let info = returnedData.map(function(data) {
+          return data[0];
+        });
+     let data = returnedData.map(function(data) {
+          return data[1];
+        });
+     let labelNames = returnedData.map(function(data) {
+          return data[0]['author'];
+        });
+     let colors = returnedData.map(function(data) {
+          return randomColor();
+        });
+    let ctx = document.getElementById("work_profile").getContext('2d');
+    var customTooltips = function (tooltip) {
+			$(this._chart.canvas).css("cursor", "pointer");
+
+			var positionY = this._chart.canvas.offsetTop;
+			var positionX = this._chart.canvas.offsetLeft;
+
+			$(".chartjs-tooltip").css({
+				opacity: 10,
+			});}
+    work_profile = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: name,
+			pointBackgroundColor: colors,
+            pointBorderColor: colors,
+			pointRadius: 9,
+			pointHoverRadius: 8,
+            data: data
+        },
+     ]
+    },
+    options: {
+    tooltips: {
+              mode: 'index',
+              intersect: true,
+			  callbacks: {
+                title: function(tooltipItem, data) {
+                  return info[tooltipItem[0]['index']]['author'];
+                },
+                beforeLabel: function(tooltipItem, data) {
+                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];
+                },
+                label: function(tooltipItem, data) {
+                  return 'Total additions: '+ info[tooltipItem['index']]['additions'];
+                },
+                afterLabel: function(tooltipItem, data) {
+                  return 'Total deletions: ' + info[tooltipItem['index']]['deletions'];
+                },
+              },
+            },
+    layout :{
+    padding: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10
+            }
+    },
+            scales: {
+                xAxes: [{
+                id: "x-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'New Work',
+                                padding: 0,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false,
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'top'
+                },
+                {
+                id: "x-axis-2",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Code Refactoring',
+                                padding: 0,
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                    gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)',
+                            },
+                    position: 'bottom'
+                }
+                ],
+                yAxes: [{
+                display: true,
+                position: 'right',
+                id: "y-axis-1",
+                scaleLabel: {
+                                display: true,
+                                labelString: 'Higher Committer',
+                                padding: 0,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                },
+                {
+                display: true,
+                position: 'left',
+                id: "y-axis-2",
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Lower Committer',
+                                padding: 0,
+
+                            },
+                    ticks: {
+                          min: -101,
+                          max: 101,
+                          display: false
+                        },
+                  gridLines: {
+                                drawBorder: true,
+                                color: 'rgba(18, 170, 75, 0.1)'
+                            },
+                }]
+            }
+        }
+    });
+      },
+      complete: function (data) {
+          $("#newWorkSpinner").css('display', 'none')
+         },
       error: function(error) {
         console.log(error);
       }
