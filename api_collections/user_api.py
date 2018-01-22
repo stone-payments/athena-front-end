@@ -155,19 +155,18 @@ def new_work(db):
               }}
               ]
 
-    # delta = end_date - start_date
     commits_count_list = query_aggregate_to_dictionary(db, 'Commit', query)
     total_days_count = len(query_aggregate_to_dictionary(db, 'Commit', query2))
-    print(total_days_count)
     all_days = [start_date + dt.timedelta(days=x) for x in range((end_date - start_date).days + 1)]
     working_days = sum(1 for d in all_days if d.weekday() < 5)
-    print(working_days)
     if not commits_count_list:
-        return json.dumps([[{'author': name, 'commits': 0, 'additions': 0, 'deletions': 0}, {'x': -100, 'y': -100}]])
+        return json.dumps([[{'author': name, 'commits': 0, 'additions': 0, 'deletions': 0}, {'x': -100, 'y': 0}]])
     commits_ratio = int((total_days_count / working_days - 0.5) * 2 * 100)
-    soma = commits_count_list[0]['additions'] + commits_count_list[0]['deletions']
-    addittions_deletions_ratio = int((commits_count_list[0]['additions'] / soma - commits_count_list[0]['deletions'] /
-                                      soma) * 100)
+    value_result = commits_count_list[0]['additions'] - commits_count_list[0]['deletions']
+    if value_result >= 0:
+        addittions_deletions_ratio = int((value_result / commits_count_list[0]['additions'] - 0.5) * 200)
+    else:
+        addittions_deletions_ratio = -100
     return json.dumps([[{'author': name, 'commits': commits_count_list[0]['commits'],
                          'additions': commits_count_list[0]['additions'], 'deletions':
                              commits_count_list[0]['deletions']}, {'x': commits_ratio,
