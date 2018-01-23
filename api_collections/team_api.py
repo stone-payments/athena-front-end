@@ -1,4 +1,3 @@
-from operator import itemgetter
 from api_client.client import *
 from api_modules.module import *
 
@@ -84,8 +83,6 @@ def team_commits(db):
     org = request.args.get("org")
     start_date = dt.datetime.strptime(request.args.get("startDate"), '%Y-%m-%d')
     end_date = dt.datetime.strptime(request.args.get("endDate"), '%Y-%m-%d') + dt.timedelta(seconds=86399)
-    print(start_date)
-    print(end_date)
     query = [
         {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
         {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
@@ -286,21 +283,9 @@ def issues_team(db):
 
 
 def team_new_work(db):
-    def merge_lists(l1, l2, key):
-        merged = {}
-        for item in l1 + l2:
-            if item[key] in merged:
-                merged[item[key]].update(item)
-            else:
-                merged[item[key]] = item
-        return [val for (_, val) in merged.items()]
     org = request.args.get("org")
     name = request.args.get("name")
-    # org = 'stone-payments'
-    # name = 'plataforma'
     start_date = start_day_string_time()
-    # start_date = dt.datetime.strptime('2017-09-01', '%Y-%m-%d')
-    # end_date = dt.datetime.strptime('2018-01-10', '%Y-%m-%d')
     end_date = end_date_string_time()
     query = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
              {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
@@ -387,5 +372,4 @@ def team_new_work(db):
         response.append([{'author': user['author'], 'commits': user['commits'], 'additions': user['additions'],
                          'deletions': user['deletions']}, {'x': commits_ratio, 'y': additions_deletions_ratio}])
     return json.dumps(response)
-
 

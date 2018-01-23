@@ -2,6 +2,9 @@ import datetime as dt
 import re
 import json
 from flask import request
+import threading
+from queue import Queue
+from operator import itemgetter
 
 
 def utc_time_datetime_format(since_time_delta):
@@ -55,12 +58,35 @@ def process_data(db, db_collection, db_query, days_delta, start_date):
     return processed_list
 
 
-def process_issues(db, db_collection, delta, start_date, created, closed):
+def processar(db, db_collection, created, delta, start_date, q, type):
     created_issues_list = process_data(db, db_collection, created, delta, start_date)
-    created_issues_list = accumulator(created_issues_list)
-    closed_issues_list = process_data(db, db_collection, closed, delta, start_date)
-    closed_issues_list = accumulator(closed_issues_list)
-    return json.dumps([closed_issues_list, created_issues_list])
+    q.put({'name': type, 'data': accumulator(created_issues_list)})
+
+
+def process_issues(db, db_collection, delta, start_date, created, closed):
+    q = Queue()
+    t = threading.Thread(target=processar, args=(db, db_collection, created, delta, start_date, q, 'created'))
+    p = threading.Thread(target=processar, args=(db, db_collection, closed, delta, start_date, q, 'closed'))
+    t.start()
+    p.start()
+    t.join()
+    p.join()
+    lista = [q.get_nowait() for _ in range(2)]
+    lista = sorted(lista, key=itemgetter('name'), reverse=False)
+    return json.dumps([lista[0]['data'], lista[1]['data']])
+
+
+def query_thread(db, db_collection, query, closed):
+    q = Queue()
+    t = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, query, q, 'created'))
+    p = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, closed, delta, start_date, q, 'closed'))
+    t.start()
+    p.start()
+    t.join()
+    p.join()
+    lista = [q.get_nowait() for _ in range(2)]
+    lista = sorted(lista, key=itemgetter('name'), reverse=False)
+    return json.dumps([lista[0]['data'], lista[1]['data']])
 
 
 def name_regex_search(db, collection_name, document_name):
@@ -91,4 +117,13 @@ def name_and_org_regex_search(db, collection_name, document_name):
 def last_updated_at(query):
     return round((dt.datetime.utcnow() - query).total_seconds() / 60)
 
+
+def merge_lists(l1, l2, key):
+    merged = {}
+    for item in l1 + l2:
+        if item[key] in merged:
+            merged[item[key]].update(item)
+        else:
+            merged[item[key]] = item
+    return [val for (_, val) in merged.items()]
 
