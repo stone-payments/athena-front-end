@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Athena</title>
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="static/assets/css/jquery.auto-complete.css">
+	<!-- date-picker   -->
+	<link href="static/assets/css/jquery.comiseo.daterangepicker.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+	<!-- Bootstrap core CSS     -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Animation library for notifications   -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+	<!--  Light Bootstrap Table core CSS    -->
+	<link href="static/assets/css/light-bootstrap-dashboard.css" rel="stylesheet" />
+	<link href="static/assets/css/demo.css" rel="stylesheet" />
+	<!--     Fonts and icons     -->
+	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+	<link href="static/assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="wrapper">
+		<div class="sidebar" data-color="">
+			<div class="sidebar-wrapper">
+				<div class="logo">
+					<a class="simple-text">
+                    ATHENA
+                </a>
+				</div>
+				<ul class="nav">
+					<li>
+						<a href="orgs">
+											<i class="pe-7s-news-paper"></i>
+											<p>Orgs</p>
+									</a>
+					</li>
+					<li>
+						<a href="teams">
+											<i class="pe-7s-note2"></i>
+											<p>Teams</p>
+									</a>
+					</li>
+					<li>
+						<a href="repos">
+                        <i class="pe-7s-graph"></i>
+                        <p>Repositories</p>
+                    </a>
+					</li>
+					<li class="active">
+						<a href="user">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="main-panel">
+			<nav class="navbar navbar-default navbar-fixed">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+						<a class="navbar-brand" href="#">Users - Dashboard</a>
+					</div>
+				</div>
+			</nav>
+			<nav class="navbar navbar-default navbar-fixed">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand">
+							<input autofocus type="text" id="name" data-myval={{user.username}} placeholder="Insert username">
+							 <input id="userRangeDate" name="userRangeDate">
+							 <i id="find" class="fa fa-search"></i> </a>
+					</div>
+					<div class="navbar-text" style="float:right;" id="orgLastUpdated">
+											<i class="fa fa-clock-o"></i>
+									</div>
+				</div>
+			</nav>
+			<div class="content" style="display:none;">
+				<div class="container-fluid">
+					<div class="row row-eq-height">
+						<div class="col-md-4">
+							<div class="card card-user">
+								<div class="image" style="background-color: rgb(4, 57, 28);">
+								</div>
+								<div class="content">
+									<div class="author">
+																	<img id =avatar class="avatar border-gray" src="static/assets/img/default-avatar.png" alt="..."/>
+																		<h4 class="title" id="username"><br />
+																		</h4>
+									</div>
+									<ul class="list-group"><br>
+									  <li class="list-group-item">
+										  <span class="badge"><div id="followers"></div></span>
+										Followers
+									  </li>
+									  <li class="list-group-item">
+										<span class="badge"><div id="following"></div></span>
+										Following
+									  </li>
+									</ul>
+								</div>
+								<div class="footer">
+								<hr>
+							</div>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="card ">
+								<div class="header">
+									<h4 class="title">Contributed Repositories</h4>
+									<p class="category">Repositories - User</p>
+								</div>
+								<div class="content" style="overflow: auto;max-height:400px;">
+									<div class="table-full-width">
+										<table class="table">
+											<tbody id="contributed_repo">
+											</tbody>
+										</table>
+									</div>
+									<div class="footer">
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="card ">
+								<div class="header">
+									<h4 class="title">Teams</h4>
+									<p class="category">Teams</p>
+								</div>
+								<div class="content" style="overflow: auto;max-height:400px;">
+									<div class="table-full-width">
+										<table class="table">
+											<tbody id="user_teams">
+											</tbody>
+										</table>
+									</div>
+									<div class="footer">
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row row-eq-height">
+						<div class="col-md-8">
+							<div class="card ">
+								<div class="header">
+									<h4 class="title">New Work - Code Refactor</h4>
+									<p class="category">New Work - Refactor - Commits scatter box</p>
+								</div>
+								<div class="content">
+									<canvas id="work_profile" class="ct-chart ct-perfect-fourth" width="auto" height="auto"></canvas>
+									<div class="footer">
+										<div class="legend">
+										</div>
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="card ">
+								<div class="header">
+									<h4 class="title">Additions - Deletions</h4>
+									<p class="category">Issues - User</p>
+								</div>
+								<div class="content">
+									<canvas id="stats_chart" class="ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+									<div class="footer">
+										<div class="legend">
+										</div>
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Commits</h4>
+									<p class="category">Commits - User</p>
+								</div>
+								<div class="content">
+									<canvas id="commmit_chart" class="ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+									<div class="footer">
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+					</nav>
+				</div>
+			</footer>
+		</div>
+	</div>
+</body>
+<!--   Core JS Files   -->
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+<!--  Notifications Plugin    -->
+<script src="static/assets/js/bootstrap-notify.js"></script>
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+<script src="static/assets/js/light-bootstrap-dashboard.js"></script>
+<script src="static/assets/js/demo.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
+<script src="static/assets/js/jquery.comiseo.daterangepicker.js"></script>
+<script>
+	$(function() {
+		$("#userRangeDate").daterangepicker();
+	});
+</script>
+<script src="static/assets/js/jquery.auto-complete.custom.js"></script>
+<script src="static/assets/js/chartsUser.js"></script>
+</html>
