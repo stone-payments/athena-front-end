@@ -371,5 +371,7 @@ def team_new_work(db):
             additions_deletions_ratio = -100
         response.append([{'author': user['author'], 'commits': user['commits'], 'additions': user['additions'],
                          'deletions': user['deletions']}, {'x': commits_ratio, 'y': additions_deletions_ratio}])
-    return json.dumps(response)
+    average_x = int(sum([x[1]['x'] for x in response])/len(response))
+    average_y = int(sum([x[1]['y'] for x in response])/len(response))
+    return json.dumps([response, {'x': average_x, 'y': average_y}])
 

@@ -178,7 +178,9 @@ $(function() {
 
       success: function(response) {
         returnedData = JSON.parse(response);
-
+        average = returnedData[1];
+        console.log(average);
+        returnedData = returnedData[0];
     let info = returnedData.map(function(data) {
           return data[0];
         });
@@ -203,30 +205,51 @@ $(function() {
     data: {
         datasets: [{
             label: name,
+            borderColor: randomColor({count: labelNames.length, seed: 11}),
+            backgroundColor: randomColor({count: labelNames.length, seed: 11}),
 			pointBackgroundColor: randomColor({count: labelNames.length, seed: 11}),
             pointBorderColor: randomColor({count: labelNames.length, seed: 11}),
 			pointRadius: 9,
 			pointHoverRadius: 8,
             data: data
         },
+        {
+            label: 'average',
+            borderColor: randomColor({count: labelNames.length, seed: 50}),
+            backgroundColor: randomColor({count: labelNames.length, seed: 50}),
+			pointBackgroundColor: randomColor({count: labelNames.length, seed: 50}),
+            pointBorderColor: randomColor({count: labelNames.length, seed: 50}),
+			pointRadius: 12,
+			pointStyle: 'triangle',
+			pointHoverRadius: 11,
+            data: [average]
+        },
      ]
     },
     options: {
     tooltips: {
-              mode: 'index',
+              mode: 'point',
               intersect: true,
 			  callbacks: {
-                title: function(tooltipItem, data) {
+                title: function(tooltipItem, datasetIndex, data) {
+                if(tooltipItem[0]['datasetIndex'] === 1){
+                    return 'average';
+                }
                   return info[tooltipItem[0]['index']]['author'];
                 },
-                beforeLabel: function(tooltipItem, data) {
-                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];
+                beforeLabel: function(tooltipItem, datasetIndex, data) {
+                if (tooltipItem.datasetIndex !== 1){
+                  return 'Total commits: '+ info[tooltipItem['index']]['commits'];}
                 },
                 label: function(tooltipItem, data) {
+                if (tooltipItem.datasetIndex !== 1){
                   return 'Total additions: '+ info[tooltipItem['index']]['additions'];
+                  }
                 },
                 afterLabel: function(tooltipItem, data) {
+                if (tooltipItem.datasetIndex !== 1){
                   return 'Total deletions: ' + info[tooltipItem['index']]['deletions'];
+                  }
                 },
               },
             },
@@ -393,7 +416,7 @@ $(function() {
             labels: labelsLicense,
             datasets: [{
               label: "License (%)",
-              backgroundColor: ['rgb(12,58,31)', 'rgb(18,170,75)','rgb(149,201,61)','rgb(214,234,206)', 'rgb(214,234,206)','rgb(168,169,173)','rgb(92,101,105)'],
+              backgroundColor: colorStone,
               borderWidth: 1,
               data: dataLicense
             }]
@@ -585,7 +608,6 @@ $(function() {
         console.log(error);
       }
     });
-
     $.ajax({
       url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',

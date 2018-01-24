@@ -160,6 +160,6 @@ venv.bak/
 *.iml
 out
 gen
-.idea/misc.xml
-.idea/modules.xml
+.idea
+
 
