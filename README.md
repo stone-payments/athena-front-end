@@ -15,7 +15,7 @@ dev and team to enhance the projects performance.
 
 Athena uses a number of open source projects to work properly:
 
-* [ArangoDB] - Graph NoSQL Database!
+* [MongoDB] - Graph NoSQL Database!
 * [Python] 
 
 ### Get Started

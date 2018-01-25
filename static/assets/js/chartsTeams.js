@@ -215,10 +215,11 @@ $(function() {
         },
         {
             label: 'average',
-            borderColor: randomColor({count: labelNames.length, seed: 50}),
-            backgroundColor: randomColor({count: labelNames.length, seed: 50}),
-			pointBackgroundColor: randomColor({count: labelNames.length, seed: 50}),
-            pointBorderColor: randomColor({count: labelNames.length, seed: 50}),
+            borderColor: '#1DAC4B',
+            borderWidth: 4,
+            backgroundColor: '#0B3B1F',
+			pointBackgroundColor: '#0B3B1F',
+            pointBorderColor: '#1DAC4B',
 			pointRadius: 12,
 			pointStyle: 'triangle',
 			pointHoverRadius: 11,
@@ -227,8 +228,16 @@ $(function() {
      ]
     },
     options: {
+    legend: {
+            position: 'bottom',
+            labels: {
+            usePointStyle: true,
+                padding: 20,
+            }
+
+            },
     tooltips: {
-              mode: 'point',
+              mode: 'nearest',
               intersect: true,
 			  callbacks: {
                 title: function(tooltipItem, datasetIndex, data) {
@@ -257,8 +266,8 @@ $(function() {
     padding: {
                 left: 10,
                 right: 10,
-                top: 10,
-                bottom: 10
+                top: 0,
+                bottom: 0
             }
     },
             scales: {

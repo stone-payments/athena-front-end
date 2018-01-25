@@ -107,7 +107,7 @@ $(function() {
             labels: labels,
             datasets: [{
               label: "Languages (%)",
-              backgroundColor: colorStone,
+              backgroundColor: colors,
               borderWidth: 1,
               data: dataSize
             }]
@@ -357,7 +357,7 @@ $(function() {
             labels: labelsLicense,
             datasets: [{
               label: "License type",
-              backgroundColor: colors,
+              backgroundColor: colorStone,
               borderWidth: 1,
               data: dataLicense
             }]
