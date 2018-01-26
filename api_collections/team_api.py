@@ -290,27 +290,27 @@ def team_new_work(db):
     start_date = start_day_string_time()
     end_date = end_date_string_time()
 
-    def get_team_id(team_id):
-        query_1_1 = [
-            {
-                '$match':
-                    {"to": team_id, "type": 'dev_to_team'}
-            },
-            {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
-            {'$project': {"_id": 0, 'Devs': '$Devs._id'}},
-            {"$unwind": "$Devs"}
-        ]
-        return query_aggregate_to_dictionary(db, 'edges', query_1_1)
-
-    query_1_1 = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-                 {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
-                 {
-                     '$match':
-                         {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
-                 },
-                 {'$project': {"_id": 0, 'Devs': '$Devs._id'}},
-                 {"$unwind": "$Devs"}
-                 ]
+    # def get_team_id(team_id):
+    #     query_1_1 = [
+    #         {
+    #             '$match':
+    #                 {"to": team_id, "type": 'dev_to_team'}
+    #         },
+    #         {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
+    #         {'$project': {"_id": 0, 'Devs': '$Devs._id'}},
+    #         {"$unwind": "$Devs"}
+    #     ]
+    #     return query_aggregate_to_dictionary(db, 'edges', query_1_1)
+    #
+    # query_1_1 = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
+    #              {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
+    #              {
+    #                  '$match':
+    #                      {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
+    #              },
+    #              {'$project': {"_id": 0, 'Devs': '$Devs._id'}},
+    #              {"$unwind": "$Devs"}
+    #              ]
 
     def query_id_name(input, output):
         while True:
@@ -357,7 +357,6 @@ def team_new_work(db):
                     {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
                     {"$unwind": "$date"},
                     {"$unwind": "$author"},
-
                     {'$group': {
                         '_id': {
                             'author': "$author",
@@ -380,17 +379,18 @@ def team_new_work(db):
             except queue.Empty:
                 break
 
-    id_team = query_find_to_dictionary(db, 'Teams', {'slug': 'all-devs'}, {'_id': '_id'})
+    id_team = query_find_to_dictionary(db, 'Teams', {'slug': name}, {'_id': '_id'})
     print(id_team[0]['_id'])
-    id_list = get_team_id(id_team[0]['_id'])
+    id_list = query_find_to_dictionary_distinct(db, 'edges', 'from', {'to': id_team[0]['_id'], "type": 'dev_to_team'})
+    # id_list = get_team_id(id_team[0]['_id'])
     print(id_list)
     # id_list = query_aggregate_to_dictionary(db, 'edges', query_1_1)
     input_commits = Queue()
     input_days = Queue()
     output_commits = Queue()
     output_days = Queue()
-    [input_commits.put(id['Devs']) for id in id_list]
-    [input_days.put(id['Devs']) for id in id_list]
+    [input_commits.put(id) for id in id_list]
+    [input_days.put(id) for id in id_list]
     workers_commit = [Thread(target=query_id_name, args=(input_commits, output_commits,)) for _ in range(200)]
     workers_days = [Thread(target=query_id_name2, args=(input_days, output_days,)) for _ in range(200)]
     [t.start() for t in workers_commit]
