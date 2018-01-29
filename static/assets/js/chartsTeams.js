@@ -167,7 +167,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' +  orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (work_profile != null) {
