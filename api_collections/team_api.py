@@ -1,5 +1,5 @@
 import functools
-
+from collections import defaultdict
 from api_client.client import *
 from api_modules.module import *
 from threading import Thread
@@ -270,10 +270,12 @@ def issues_team(db):
                     {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
                 ]
                 count_list = query_aggregate_to_dictionary(db, 'Issue', query_1_2)
+                # print(count_list)
                 for count in count_list:
                     count['date'] = dt.datetime(count['year'], count['month'], count['day'], 0, 0)
                 range_days = [start_date + dt.timedelta(days=i) for i in range(delta.days + 1)]
                 processed_list = [fill_all_dates(day, count_list) for day in range_days]
+                # print(processed_list)
                 output.put(accumulator(processed_list))
             except queue.Empty:
                 break
@@ -329,7 +331,13 @@ def issues_team(db):
     # print(output_commits.qsize())
     lista_closed = [output_closed.get_nowait() for _ in range(output_closed.qsize())]
     lista_created = [output_created.get_nowait() for _ in range(output_created.qsize())]
-    print(lista_created[1])
+    c = defaultdict(int)
+    lista_closed = [x for x in lista_closed]
+    print(lista_closed)
+    for d in lista_closed:
+        c[d['day']] += d['count']
+    lista_closed = [{'day': day, 'count': count} for day, count in c.items()]
+    print(lista_closed)
     # dictf = functools.reduce(lambda x, y: dict((k, v + y[k]) for k, v in x.items()), lista_created[0])
     # print(dictf)
     # lista = sorted(dictf, key=itemgetter('name'), reverse=False)
