@@ -628,6 +628,7 @@ $(function() {
       },
       success: function(response) {
         returnedData = JSON.parse(response);
+        console.log(returnedData);
         let labelsIssues1 = returnedData[0].map(function(num) {
           return num.day;
         });
