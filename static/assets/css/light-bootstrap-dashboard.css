@@ -2859,3 +2859,14 @@ body > .navbar-collapse {
 #readme,#openSource,#license,#stargazers,#forks{
   text-align: center;
 }
+
+#find{
+    cursor: pointer;
+    background: #4c6c59;
+    padding: 4.3px;
+    font-size: 2rem;
+    margin-bottom: 2px;
+    color: white;
+    border-radius: 5px;
+    width: 32px;
+}
