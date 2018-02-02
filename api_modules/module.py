@@ -76,19 +76,6 @@ def process_issues(db, db_collection, delta, start_date, created, closed):
     return json.dumps([lista[0]['data'], lista[1]['data']])
 
 
-# def query_thread(db, db_collection, query, closed):
-#     q = Queue()
-#     t = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, query, q, 'created'))
-#     p = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, closed, delta, start_date, q, 'closed'))
-#     t.start()
-#     p.start()
-#     t.join()
-#     p.join()
-#     lista = [q.get_nowait() for _ in range(2)]
-#     lista = sorted(lista, key=itemgetter('name'), reverse=False)
-#     return json.dumps([lista[0]['data'], lista[1]['data']])
-
-
 def name_regex_search(db, collection_name, document_name):
     name = "^" + str(request.args.get("name"))
     compiled_name = re.compile(r'%s' % name, re.I)
