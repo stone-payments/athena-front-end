@@ -29,10 +29,10 @@ def fill_all_dates(day_in_range, collection_count_list):
     day = {}
     for y in collection_count_list:
         if y.get('date') == day_in_range:
-            day['day'] = str(y.get('date').strftime('%a %d-%b'))
+            day['day'] = str(y.get('date').strftime('%a %d-%b-%y'))
             day['count'] = int(y.get('count'))
             return day
-    day['day'] = day_in_range.strftime('%a %d-%b')
+    day['day'] = day_in_range.strftime('%a %d-%b-%y')
     day['count'] = 0
     return day
 
@@ -76,19 +76,6 @@ def process_issues(db, db_collection, delta, start_date, created, closed):
     return json.dumps([lista[0]['data'], lista[1]['data']])
 
 
-def query_thread(db, db_collection, query, closed):
-    q = Queue()
-    t = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, query, q, 'created'))
-    p = threading.Thread(target=query_aggregate_to_dictionary, args=(db, db_collection, closed, delta, start_date, q, 'closed'))
-    t.start()
-    p.start()
-    t.join()
-    p.join()
-    lista = [q.get_nowait() for _ in range(2)]
-    lista = sorted(lista, key=itemgetter('name'), reverse=False)
-    return json.dumps([lista[0]['data'], lista[1]['data']])
-
-
 def name_regex_search(db, collection_name, document_name):
     name = "^" + str(request.args.get("name"))
     compiled_name = re.compile(r'%s' % name, re.I)
@@ -105,7 +92,7 @@ def name_and_org_regex_search(db, collection_name, document_name):
     db_last_updated = dt.datetime.utcnow() + dt.timedelta(hours=-5)
     name = "^" + str(request.args.get("name"))
     compiled_name = re.compile(r'%s' % name, re.I)
-    query_result = db[collection_name].find({'org': org,'db_last_updated': {'$gte': db_last_updated},
+    query_result = db[collection_name].find({'org': org, 'db_last_updated': {'$gte': db_last_updated},
                                              document_name: {'$regex': compiled_name}},
                                             {'_id': 0, document_name: 1}).limit(6)
     result = [dict(i) for i in query_result]

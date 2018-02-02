@@ -1,5 +1,3 @@
-from operator import itemgetter
-
 from api_client.client import *
 from api_modules.module import *
 
@@ -128,7 +126,8 @@ def open_source_readme_org(db):
 
 def org_license(db):
     name = request.args.get("name")
-    query = [{'$match': {'org': name, 'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
+    query = [{'$match': {'org': name, 'openSource': True,
+                         'db_last_updated': {'$gte': utc_time_datetime_format(-1)}}},
              {'$group': {
                  '_id': {
                      'license': "$licenseType",

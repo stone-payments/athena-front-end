@@ -357,7 +357,7 @@ $(function() {
             labels: labelsLicense,
             datasets: [{
               label: "License type",
-              backgroundColor: ['rgb(168,169,173)', '#0B3B1F', '#1DAC4B', '#380713', '#74121D', '#C52233', '#595708', '#657212', '#ABC421'],
+              backgroundColor: colorStone,
               borderWidth: 1,
               data: dataLicense
             }]

@@ -1,5 +1,8 @@
+from collections import defaultdict
 from api_client.client import *
 from api_modules.module import *
+from threading import Thread
+import queue
 
 
 def check_with_exist(db):
@@ -76,49 +79,6 @@ def team_open_source(db):
         find_key(readme_status_list, [True, False])
     readme_status_list = sorted(readme_status_list, key=itemgetter('status'), reverse=False)
     return json.dumps(readme_status_list)
-
-
-def team_commits(db):
-    name = request.args.get("name")
-    org = request.args.get("org")
-    start_date = dt.datetime.strptime(request.args.get("startDate"), '%Y-%m-%d')
-    end_date = dt.datetime.strptime(request.args.get("endDate"), '%Y-%m-%d') + dt.timedelta(seconds=86399)
-    query = [
-        {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-        {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
-        {
-            '$match':
-                {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
-        },
-        {'$project': {"_id": 0}},
-        {'$lookup': {'from': 'edges', 'localField': 'Devs._id', 'foreignField': 'from', 'as': 'Commit2'}},
-        {"$unwind": "$Commit2"},
-        {
-            '$match':
-                {"Commit2.type": 'dev_to_commit'}
-        },
-        {'$lookup': {'from': 'Commit', 'localField': 'Commit2.to', 'foreignField': '_id', 'as': 'Commit3'}},
-        {'$project': {"_id": 0, 'date': '$Commit3.committedDate'}},
-        {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
-        {"$unwind": "$date"},
-        {'$group': {
-            '_id': {
-                'year': {'$year': "$date"},
-                'month': {'$month': "$date"},
-                'day': {'$dayOfMonth': "$date"},
-            },
-            'count': {'$sum': 1}
-        }},
-        {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
-    ]
-    delta = end_date - start_date
-    commits_count_list = db.edges.aggregate(query)
-    commits_count_list = [dict(i) for i in commits_count_list]
-    for commit_count in commits_count_list:
-        commit_count['date'] = dt.datetime(commit_count['year'], commit_count['month'], commit_count['day'], 0, 0)
-    days = [start_date + dt.timedelta(days=i) for i in range(delta.days + 1)]
-    lst = [fill_all_dates(day, commits_count_list) for day in days]
-    return json.dumps(lst)
 
 
 def team_readme(db):
@@ -217,69 +177,159 @@ def team_name(db):
     return json.dumps(result)
 
 
+def team_commits(db):
+    name = request.args.get("name")
+    org = request.args.get("org")
+    start_date = dt.datetime.strptime(request.args.get("startDate"), '%Y-%m-%d')
+    end_date = dt.datetime.strptime(request.args.get("endDate"), '%Y-%m-%d') + dt.timedelta(seconds=86399)
+    delta = end_date - start_date
+
+    def issue_response(list):
+        c = defaultdict(int)
+        list = [x for xs in list for x in xs]
+        range_days = [start_date + dt.timedelta(days=i) for i in range(delta.days + 1)]
+        list = sorted(list, key=itemgetter('date'), reverse=False)
+        for y in list:
+            y['day'] = str(y.get('date').strftime('%a %d-%b-%y'))
+        for d in list:
+            c[d['date']] += d['count']
+        list = [{'date': day, 'count': count} for day, count in c.items()]
+        list = [fill_all_dates(day, list) for day in range_days]
+        return list
+
+    def query_created(input, output):
+        while True:
+            try:
+                dev_id = input.get_nowait()
+                query_1_2 = [{'$match': {'devId': dev_id,
+                                         'committedDate': {'$gte': start_date, '$lt': end_date}}},
+                             {'$group': {
+                                 '_id': {
+                                     'year': {'$year': "$committedDate"},
+                                     'month': {'$month': "$committedDate"},
+                                     'day': {'$dayOfMonth': "$committedDate"},
+                                 },
+                                 'count': {'$sum': 1}
+                             }},
+                             {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day",
+                                           'count': 1}}]
+                count_list = query_aggregate_to_dictionary(db, 'Commit', query_1_2)
+                if count_list:
+                    for count in count_list:
+                        count['date'] = dt.datetime(count['year'], count['month'], count['day'], 0, 0)
+                    output.put(count_list)
+            except queue.Empty:
+                break
+
+    id_team = query_find_to_dictionary(db, 'Teams', {'slug': name, 'org': org}, {'_id': '_id'})
+    repo_id_list = query_find_to_dictionary_distinct(db, 'edges', 'from',
+                                                     {'to': id_team[0]['_id'], "type": 'dev_to_team'})
+    created = Queue()
+    output_created = Queue()
+    [created.put(id) for id in repo_id_list]
+    workers_commit = [Thread(target=query_created, args=(created, output_created,)) for _ in range(200)]
+    [t.start() for t in workers_commit]
+    [t.join() for t in workers_commit]
+    lista_created = [output_created.get_nowait() for _ in range(output_created.qsize())]
+    lista_created = issue_response(lista_created)
+    return json.dumps(lista_created)
+
+
 def issues_team(db):
     name = request.args.get("name")
     org = request.args.get("org")
     start_date = dt.datetime.strptime(request.args.get("startDate"), '%Y-%m-%d')
     end_date = dt.datetime.strptime(request.args.get("endDate"), '%Y-%m-%d') + dt.timedelta(seconds=86399)
     delta = end_date - start_date
-    query_created = [
-        {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-        {'$lookup': {'from': 'Repo', 'localField': 'from', 'foreignField': '_id', 'as': 'Repos'}},
-        {
-            '$match':
-                {"Team.0.slug": name, 'type': 'repo_to_team', 'Team.0.org': org}
-        },
-        {'$project': {"_id": 0}},
-        {'$lookup': {'from': 'edges', 'localField': 'Repos._id', 'foreignField': 'from', 'as': 'Commit2'}},
-        {"$unwind": "$Commit2"},
-        {
-            '$match':
-                {"Commit2.type": 'issue_to_repo'}
-        },
-        {'$lookup': {'from': 'Issue', 'localField': 'Commit2.to', 'foreignField': '_id', 'as': 'Commit3'}},
-        {'$project': {"_id": 0, 'date': '$Commit3.createdAt'}},
-        {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
-        {"$unwind": "$date"},
-        {'$group': {
-            '_id': {
-                'year': {'$year': "$date"},
-                'month': {'$month': "$date"},
-                'day': {'$dayOfMonth': "$date"},
-            },
-            'count': {'$sum': 1}
-        }},
-        {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
-    ]
-    query_closed = [
-        {'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-        {'$lookup': {'from': 'Repo', 'localField': 'from', 'foreignField': '_id', 'as': 'Repos'}},
-        {
-            '$match':
-                {"Team.0.slug": name, 'type': 'repo_to_team', 'Team.0.org': org}
-        },
-        {'$project': {"_id": 0}},
-        {'$lookup': {'from': 'edges', 'localField': 'Repos._id', 'foreignField': 'from', 'as': 'Commit2'}},
-        {"$unwind": "$Commit2"},
-        {
-            '$match':
-                {"Commit2.type": 'issue_to_repo'}
-        },
-        {'$lookup': {'from': 'Issue', 'localField': 'Commit2.to', 'foreignField': '_id', 'as': 'Commit3'}},
-        {'$project': {"_id": 0, 'date': '$Commit3.closedAt'}},
-        {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
-        {"$unwind": "$date"},
-        {'$group': {
-            '_id': {
-                'year': {'$year': "$date"},
-                'month': {'$month': "$date"},
-                'day': {'$dayOfMonth': "$date"},
-            },
-            'count': {'$sum': 1}
-        }},
-        {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
-    ]
-    return process_issues(db, 'edges', delta, start_date, created=query_created, closed=query_closed)
+
+    def issue_response(list):
+        c = defaultdict(int)
+        list = [x for xs in list for x in xs]
+        range_days = [start_date + dt.timedelta(days=i) for i in range(delta.days + 1)]
+        list = sorted(list, key=itemgetter('date'), reverse=False)
+        for y in list:
+            y['day'] = str(y.get('date').strftime('%a %d-%b-%y'))
+        for d in list:
+            c[d['date']] += d['count']
+        list = [{'date': day, 'count': count} for day, count in c.items()]
+        list = [fill_all_dates(day, list) for day in range_days]
+        list = accumulator(list)
+        return list
+
+    def query_created(input, output):
+        while True:
+            try:
+                id_name = input.get_nowait()
+                query_1_2 = [
+                    {'$match': {'repositoryId': id_name,
+                                'createdAt': {'$gte': start_date,
+                                              '$lt': end_date}}},
+                    {'$group': {
+                        '_id': {
+                            'year': {'$year': "$createdAt"},
+                            'month': {'$month': "$createdAt"},
+                            'day': {'$dayOfMonth': "$createdAt"},
+                        },
+                        'count': {'$sum': 1}
+                    }},
+                    {'$sort': {'_id': 1}},
+                    {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
+                ]
+                count_list = query_aggregate_to_dictionary(db, 'Issue', query_1_2)
+                if count_list:
+                    for count in count_list:
+                        count['date'] = dt.datetime(count['year'], count['month'], count['day'], 0, 0)
+                    output.put(count_list)
+            except queue.Empty:
+                break
+
+    def query_closed(input, output):
+        while True:
+            try:
+                id_name = input.get_nowait()
+                query_1_2 = [
+                    {'$match': {'repositoryId': id_name,
+                                'closedAt': {'$gte': start_date,
+                                             '$lt': end_date}}},
+                    {'$group': {
+                        '_id': {
+                            'year': {'$year': "$closedAt"},
+                            'month': {'$month': "$closedAt"},
+                            'day': {'$dayOfMonth': "$closedAt"},
+                        },
+                        'count': {'$sum': 1}
+                    }},
+                    {'$sort': {'_id': 1}},
+                    {'$project': {"_id": 0, "year": "$_id.year", "month": "$_id.month", "day": "$_id.day", 'count': 1}}
+                ]
+                count_list = query_aggregate_to_dictionary(db, 'Issue', query_1_2)
+                if count_list:
+                    for count in count_list:
+                        count['date'] = dt.datetime(count['year'], count['month'], count['day'], 0, 0)
+                    output.put(count_list)
+            except queue.Empty:
+                break
+
+    id_team = query_find_to_dictionary(db, 'Teams', {'slug': name, 'org': org}, {'_id': '_id'})
+    repo_id_list = query_find_to_dictionary_distinct(db, 'edges', 'from',
+                                                     {'to': id_team[0]['_id'], "type": 'repo_to_team'})
+    created = Queue()
+    closed = Queue()
+    output_created = Queue()
+    output_closed = Queue()
+    [created.put(id) for id in repo_id_list]
+    [closed.put(id) for id in repo_id_list]
+    workers_commit = [Thread(target=query_created, args=(created, output_created,)) for _ in range(200)]
+    workers_days = [Thread(target=query_closed, args=(closed, output_closed,)) for _ in range(200)]
+    [t.start() for t in workers_commit]
+    [t.start() for t in workers_days]
+    [t.join() for t in workers_commit]
+    [t.join() for t in workers_days]
+    lista_closed = [output_closed.get_nowait() for _ in range(output_closed.qsize())]
+    lista_created = [output_created.get_nowait() for _ in range(output_created.qsize())]
+    lista_closed = issue_response(lista_closed)
+    lista_created = issue_response(lista_created)
+    return json.dumps([lista_closed, lista_created])
 
 
 def team_new_work(db):
@@ -287,75 +337,78 @@ def team_new_work(db):
     name = request.args.get("name")
     start_date = start_day_string_time()
     end_date = end_date_string_time()
-    query = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-             {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
-             {
-                 '$match':
-                     {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
-             },
-             {'$project': {"_id": 0, 'Devs': 1}},
-             {'$lookup': {'from': 'edges', 'localField': 'Devs._id', 'foreignField': 'from', 'as': 'Commit2'}},
 
-             {"$unwind": "$Commit2"},
-             {
-                 '$match':
-                     {"Commit2.type": 'dev_to_commit'}
-             },
-             {'$lookup': {'from': 'Commit', 'localField': 'Commit2.to', 'foreignField': '_id', 'as': 'Commit3'}},
-             {'$project': {"_id": 0, 'date': '$Commit3.committedDate', 'author': '$Commit3.author',
-                           'additions': '$Commit3.additions', 'deletions': '$Commit3.deletions'}},
-             {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
-             {"$unwind": "$author"}, {"$unwind": "$additions"}, {"$unwind": "$deletions"},
-             {'$group': {
-                 '_id': {'author': "$author"
-                         },
-                 'additions': {'$sum': '$additions'},
-                 'deletions': {'$sum': '$deletions'},
-                 'commits': {'$sum': 1},
-             }},
-             {'$project': {'_id': 0, 'author': '$_id.author',
-                           'additions': '$additions', 'deletions': '$deletions', 'commits': '$commits'}}]
-    query2 = [{'$lookup': {'from': 'Teams', 'localField': 'to', 'foreignField': '_id', 'as': 'Team'}},
-              {'$lookup': {'from': 'Dev', 'localField': 'from', 'foreignField': '_id', 'as': 'Devs'}},
-              {
-                  '$match':
-                      {"Team.0.slug": name, 'type': 'dev_to_team', 'Team.0.org': org}
-              },
-              {'$project': {"_id": 0, 'Devs': 1}},
-              {'$lookup': {'from': 'edges', 'localField': 'Devs._id', 'foreignField': 'from', 'as': 'Commit2'}},
+    def query_id_name(input, output):
+        while True:
+            try:
+                id_name = input.get_nowait()
+                query_1_2 = [
+                    {'$match': {'devId': id_name,
+                                'committedDate': {'$gte': start_date,
+                                                  '$lt': end_date}}},
+                    {'$group': {
+                        '_id': {'author': "$author"
+                                },
+                        'additions': {'$sum': '$additions'},
+                        'deletions': {'$sum': '$deletions'},
+                        'commits': {'$sum': 1},
+                    }},
+                    {'$project': {'_id': 0, 'author': '$_id.author',
+                                  'additions': '$additions', 'deletions': '$deletions', 'commits': '$commits'}},
 
-              {"$unwind": "$Commit2"},
-              {
-                  '$match':
-                      {"Commit2.type": 'dev_to_commit'}
-              },
-              {'$lookup': {'from': 'Commit', 'localField': 'Commit2.to', 'foreignField': '_id', 'as': 'Commit3'}},
-              {'$project': {"_id": 0, 'date': '$Commit3.committedDate', 'author': '$Commit3.author',
-                            'additions': '$Commit3.additions', 'deletions': '$Commit3.deletions'}},
-              {'$match': {'date': {'$gte': start_date, '$lt': end_date}}},
-              {"$unwind": "$date"},
-              {"$unwind": "$author"},
+                ]
+                response = query_aggregate_to_dictionary(db, 'Commit', query_1_2)
+                output.put(response)
+            except queue.Empty:
+                break
 
-              {'$group': {
-                  '_id': {
-                      'author': "$author",
-                      'year': {'$year': "$date"},
-                      'month': {'$month': "$date"},
-                      'day': {'$dayOfMonth': "$date"},
-                  }
-              }},
-              {'$project': {"_id": 0, 'author': '$_id.author'}},
-              {'$group': {
-                  '_id': {
-                      'author': "$author"
-                  },
-                  'totalAmount': {'$sum': 1}
-              }},
-              {'$project': {"_id": 0, 'author': '$_id.author', 'totalAmount': '$totalAmount'}}
-              ]
+    def query_id_name2(input, output):
+        while True:
+            try:
+                id_name = input.get_nowait()
+                query_1_2 = [
+                    {'$match': {'devId': id_name,
+                                'committedDate': {'$gte': start_date,
+                                                  '$lt': end_date}}},
+                    {'$group': {
+                        '_id': {
+                            'author': "$author",
+                            'year': {'$year': "$committedDate"},
+                            'month': {'$month': "$committedDate"},
+                            'day': {'$dayOfMonth': "$committedDate"},
+                        }
+                    }},
+                    {'$group': {
+                        '_id': {
+                            'author': "$_id.author"
+                        },
+                        'totalAmount': {'$sum': 1}
+                    }},
+                    {'$project': {"_id": 0, 'author': '$_id.author', 'totalAmount': '$totalAmount'}}
+                ]
+                response = query_aggregate_to_dictionary(db, 'Commit', query_1_2)
+                output.put(response)
+            except queue.Empty:
+                break
 
-    commits_count_list = query_aggregate_to_dictionary(db, 'edges', query)
-    total_days_count = query_aggregate_to_dictionary(db, 'edges', query2)
+    id_team = query_find_to_dictionary(db, 'Teams', {'slug': name, 'org': org}, {'_id': '_id'})
+    id_list = query_find_to_dictionary_distinct(db, 'edges', 'from', {'to': id_team[0]['_id'], "type": 'dev_to_team'})
+    input_commits = Queue()
+    input_days = Queue()
+    output_commits = Queue()
+    output_days = Queue()
+    [input_commits.put(id) for id in id_list]
+    [input_days.put(id) for id in id_list]
+    workers_commit = [Thread(target=query_id_name, args=(input_commits, output_commits,)) for _ in range(200)]
+    workers_days = [Thread(target=query_id_name2, args=(input_days, output_days,)) for _ in range(200)]
+    [t.start() for t in workers_commit]
+    [t.start() for t in workers_days]
+    [t.join() for t in workers_commit]
+    [t.join() for t in workers_days]
+    commits_count_list = [output_commits.get_nowait() for _ in id_list]
+    total_days_count = [output_days.get_nowait() for _ in id_list]
+    commits_count_list = [x[0] for x in commits_count_list if x]
+    total_days_count = [x[0] for x in total_days_count if x]
     lista = merge_lists(commits_count_list, total_days_count, 'author')
     all_days = [start_date + dt.timedelta(days=x) for x in range((end_date - start_date).days + 1)]
     working_days = sum(1 for d in all_days if d.weekday() < 5)
@@ -370,6 +423,10 @@ def team_new_work(db):
         else:
             additions_deletions_ratio = -100
         response.append([{'author': user['author'], 'commits': user['commits'], 'additions': user['additions'],
-                         'deletions': user['deletions']}, {'x': commits_ratio, 'y': additions_deletions_ratio}])
-    return json.dumps(response)
-
+                          'deletions': user['deletions']}, {'x': commits_ratio, 'y': additions_deletions_ratio}])
+    if response:
+        average_x = int(sum([x[1]['x'] for x in response]) / len(response))
+        average_y = int(sum([x[1]['y'] for x in response]) / len(response))
+        return json.dumps([response, {'x': average_x, 'y': average_y}])
+    else:
+        return json.dumps([response, {'x': 0, 'y': 0}])

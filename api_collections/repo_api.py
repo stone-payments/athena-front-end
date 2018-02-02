@@ -1,5 +1,3 @@
-from operator import itemgetter
-
 from api_client.client import *
 from api_modules.module import *
 
