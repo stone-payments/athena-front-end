@@ -15,7 +15,7 @@ $(function() {
       minChars: 1,cache: false, delay : 20,
       source: function(term, response) {
       $('.autocomplete-suggestion').show();
-       $.getJSON('/get_user_login?name=' + term, function(result) {
+       $.getJSON(host + '/get_user_login?name=' + term, function(result) {
           let returnedData = result.map(function(num) {
             return num.login;
           });
@@ -42,7 +42,7 @@ $(function() {
       lastDay = JSON.parse($("#userRangeDate").val()).end;
     }
     $.ajax({
-      url: '/get_avatar?login=' + name,
+      url: host + '/get_avatar?login=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -79,7 +79,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: host + '/get_user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -151,7 +151,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: host + '/get_user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -178,7 +178,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_user_team?name=' + name,
+      url: host + '/get_user_team?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -206,7 +206,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: host + '/get_user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -292,7 +292,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: host + '/get_user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

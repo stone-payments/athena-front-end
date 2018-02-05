@@ -10,7 +10,7 @@ $(function() {
   }),
 
   $.ajax({
-          url: '/get_org_names',
+          url: host + '/get_org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -67,7 +67,7 @@ $(function() {
       lastDay = JSON.parse($("#repoRangeDate").val()).end;
     }
     $.ajax({
-      url: '/get_languages_repo?name=' + name+'&org='+ orgSelector,
+      url: host + '/get_languages_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -146,7 +146,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_commits_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: host + '/get_commits_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -219,7 +219,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_members_repo?name=' + name+'&org='+ orgSelector,
+      url: host + '/get_members_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -242,7 +242,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_best_practices_repo?name=' + name+'&org='+ orgSelector,
+      url: host + '/get_best_practices_repo?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -291,7 +291,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_issues_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: host + '/get_issues_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
