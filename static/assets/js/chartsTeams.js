@@ -41,7 +41,7 @@ $(function() {
     $("#issuesSpinner").html(spinner);
     $("#newWorkSpinner").html(spinner);
     $.ajax({
-              url: '/get_org_names',
+              url: '/org_names',
               type: 'GET',
               success: function(response) {
                 returnedData = JSON.parse(response);
@@ -70,7 +70,8 @@ $(function() {
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-     $.getJSON('/get_team_name?name=' + term+'&org='+ orgSelector, function(result) {
+     $.getJSON('/team_name?name=' + term+'&org='+ orgSelector, function(result) {
+        console.log(result)
         let returnedData = result.map(function(num) {
           return num.slug;
         });
@@ -126,7 +127,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/get_open_source_team?org=' + orgSelector + '&name=' + name,
+      url: '/team_open_source?org=' + orgSelector + '&name=' + name,
       type: 'GET',
        beforeSend: function() {
        if (openSourceChart != null) {
@@ -167,7 +168,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' +  orgSelector,
+      url: '/team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' +  orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (work_profile != null) {
@@ -360,7 +361,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_readme_team?org=' + orgSelector + '&name=' + name,
+      url: '/team_readme?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
        if (readmeChart != null) {
@@ -402,7 +403,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/get_license_type_team?org=' + orgSelector + '&name=' + name,
+      url: '/team_license?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       if (LicenseType != null) {
@@ -441,7 +442,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/get_languages_team?org=' + orgSelector + '&name=' + name,
+      url: '/team_languages?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       if (languages != null) {
@@ -508,7 +509,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_repo_members_team?org=' + orgSelector + '&name=' + name,
+      url: '/team_repo_members?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
          $("#members").empty();
@@ -539,7 +540,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/get_commits_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/team_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (commitsChart != null) {
@@ -618,7 +619,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_issues_team?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/team_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (issuesChart != null) {

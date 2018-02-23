@@ -1,14 +1,8 @@
-from flask import Flask, render_template
-from flask_cors import CORS
-from api_collections import *
-from api_configurations.config import *
-from api_client.mongo_client import *
-
+from flask import Flask, render_template, request
+from api_modules.module import request_router
+import os
 
 app = Flask(__name__)
-CORS(app)
-mongo = Mongraph(db_name=db_name, db_url=db_url, username=username, password=password, auth_mechanism=auth_mechanism)
-db = mongo.connect()
 
 
 @app.route('/')
@@ -25,7 +19,6 @@ def repos():
     repository_name = request.args.get('name', default="None")
     repo = {'name': repository_name}
     org = {'name': org_name}
-    print(org)
     return render_template('repos.html', repo=repo, org=org)
 
 
@@ -49,171 +42,169 @@ def users():
 def tv():
     return render_template('tv.html')
 
-# Repos #####
 
-
-@app.route('/get_languages_repo')
-def get_languages_repo():
-    return repo_languages(db)
-
-
-@app.route('/get_commits_repo')
-def get_commits_repo():
-    return repo_commits(db)
-
-
-@app.route('/get_members_repo')
-def get_members_repo():
-    return repo_members(db)
-
-
-@app.route('/get_best_practices_repo')
-def get_best_practices_repo():
-    return repo_best_practices(db)
-
-
-@app.route('/get_issues_repo')
-def get_issues_repo():
-    return repo_issues(db)
-
-
-@app.route('/get_repo_name')
-def get_repo_name():
-    return repo_name(db)
-
-# Orgs ############
-
-
-@app.route('/get_org_names')
+# Org
+@app.route('/org_names')
 def get_org_names():
-    return org_names(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_org_info')
+@app.route('/org_info')
 def get_org_info():
-    return org_info(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_languages_org')
+@app.route('/org_languages')
 def get_languages_org():
-    return org_languages(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_open_source_org')
+@app.route('/org_open_source')
 def get_open_source_org():
-    return org_open_source(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_commits_org')
+@app.route('/org_commits')
 def get_commits_org():
-    return org_commits(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_readme_org')
+@app.route('/org_readme')
 def get_readme_org():
-    return org_readme(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_open_source_readme_org')
+@app.route('/org_open_source_readme')
 def get_open_source_readme_org():
-    return open_source_readme_org(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_license_type_org')
+@app.route('/org_license')
 def get_license_type_org():
-    return org_license(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_issues_org')
+@app.route('/org_issues')
 def get_issues_org():
-    return org_issues(db)
+    return request_router(request.full_path)
 
 
-# Teams ###
+# Team
 @app.route('/team_check_with_exist')
 def team_check_with_exist():
-    return check_with_exist(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_languages_team')
+@app.route('/team_languages')
 def get_languages_team():
-    return team_languages(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_open_source_team')
+@app.route('/team_open_source')
 def get_open_source_team():
-    return team_open_source(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_commits_team')
+@app.route('/team_commits')
 def get_commits_team():
-    return team_commits(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_readme_team')
+@app.route('/team_readme')
 def get_readme_team():
-    return team_readme(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_license_type_team')
+@app.route('/team_license')
 def get_license_type_team():
-    return team_license(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_repo_members_team')
+@app.route('/team_repo_members')
 def get_repo_members_team():
-    return team_repo_members(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_issues_team')
+@app.route('/team_issues')
 def get_issues_team():
-    return issues_team(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_team_name')
+@app.route('/team_name')
 def get_team_name():
-    return team_name(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_team_new_work')
+@app.route('/team_new_work')
 def get_team_new_work():
-    return team_new_work(db)
-# Users #########################
+    return request_router(request.full_path)
 
 
-@app.route('/get_avatar')
+# Users
+@app.route('/user_avatar')
 def get_avatar():
-    return avatar(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_commit')
+@app.route('/user_commit')
 def get_user_commit():
-    return user_commit(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_contributed_repo')
+@app.route('/user_contributed_repo')
 def get_user_contributed_repo():
-    return user_contributed_repo(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_stats')
+@app.route('/user_stats')
 def get_user_stats():
-    return user_stats(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_team')
+@app.route('/user_team')
 def get_user_team():
-    return user_team(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_login')
+@app.route('/user_login')
 def get_user_login():
-    return user_login(db)
+    return request_router(request.full_path)
 
 
-@app.route('/get_user_new_work')
+@app.route('/user_new_work')
 def get_user_new_work():
-    return new_work(db)
+    return request_router(request.full_path)
+
+
+# Repo
+@app.route('/repo_languages')
+def get_languages_repo():
+    return request_router(request.full_path)
+
+
+@app.route('/repo_commits')
+def get_commits_repo():
+    return request_router(request.full_path)
+
+
+@app.route('/repo_members')
+def get_members_repo():
+    return request_router(request.full_path)
+
+
+@app.route('/repo_best_practices')
+def get_best_practices_repo():
+    return request_router(request.full_path)
+
+
+@app.route('/repo_issues')
+def get_issues_repo():
+    return request_router(request.full_path)
+
+
+@app.route('/repo_name')
+def get_repo_name():
+    return request_router(request.full_path)
 
 
 if __name__ == '__main__':

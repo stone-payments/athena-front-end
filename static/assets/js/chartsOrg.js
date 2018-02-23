@@ -30,7 +30,7 @@ $(function() {
                 </div>
             </div>`
     $.ajax({
-          url: '/get_org_names',
+          url: '/org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -63,7 +63,7 @@ $(function() {
       lastDay = JSON.parse($("#org").val()).end;
     }
     $.ajax({
-      url: '/get_org_info?name=' + name,
+      url: '/org_info?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -88,7 +88,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_languages_org?name=' + name,
+      url: '/org_languages?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -152,7 +152,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_commits_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/org_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -227,7 +227,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_open_source_org?name=' + name,
+      url: '/org_open_source?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -264,7 +264,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_readme_org?name=' + name,
+      url: '/org_readme?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -301,7 +301,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_open_source_readme_org?name=' + name,
+      url: '/org_open_source_readme?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -338,7 +338,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_license_type_org?name=' + name,
+      url: '/org_license?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -401,7 +401,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/get_issues_org?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/org_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
