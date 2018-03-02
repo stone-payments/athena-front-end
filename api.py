@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
 from api_modules.module import request_router
-import os
 
 app = Flask(__name__)
 
@@ -9,8 +8,7 @@ app = Flask(__name__)
 @app.route('/orgs')
 @app.route('/index')
 def index():
-    user = {'username': 'stone-payments'}
-    return render_template('orgs.html', user=user)
+    return render_template('orgs.html')
 
 
 @app.route('/repos')
@@ -206,6 +204,3 @@ def get_issues_repo():
 def get_repo_name():
     return request_router(request.full_path)
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=os.getenv("PORT"))

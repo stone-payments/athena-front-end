@@ -24,14 +24,14 @@ Risk: 'Low'
 #   Medium = 2,
 #   High = 3,
 #   VeryHigh = 4,
-Priority: 'Medium'
+Priority: 'Low'
 
 # Tipo de mudança:
 #   Minor = 1,
 #   Standard = 2,
 #   Major = 3,
 #   Emergency = 4,
-ChangeType: 'Standard'
+ChangeType: 'Minor'
 
 #Janela de deploy (opcional):
 # Os campos de data/hora para execução do deploy passam a ser opcionais,
@@ -57,13 +57,13 @@ CustomFields:
 #  ChangeValidatorDepartment: 'RC'
 
 # Obrigatório (string): Nome da aplicação implantada.
-  SystemName: Athena-Api
+  SystemName: Athena-Frontend
 
 # Obrigatório (enum): Motivo do deploy, valores possíveis:
 # - Feature
 # - Bugfix
 # - BugfixAndFeature
-  ChangeReason: Bugfix
+  ChangeReason: Feature
 # Obrigatório (boolean): É uma mudança emergencial?
   EmergencialChange: false
 # Obrigatório (boolean): Pode afetar sistemas críticos (Autorização, Pagamento, Atendimento)?
