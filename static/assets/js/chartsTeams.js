@@ -419,7 +419,50 @@ $(function() {
         let dataLicense = returnedData.map(function(num) {
           return num.count;
         });
-
+        if (labelsLicense.length > 3){
+        LicenseType = new Chart(document.getElementById("LicenseType"), {
+          type: 'bar',
+          data: {
+            labels: labelsLicense,
+            datasets: [{
+              label: "Languages (%)",
+              backgroundColor: colorStone,
+              borderWidth: 1,
+              data: dataLicense
+            }]
+          },
+          options: {
+            tooltips: {
+              mode: 'index',
+              intersect: false
+            },
+            scales: {
+              yAxes: [{
+              gridLines: {
+                            drawBorder: true,
+                            color: 'rgba(18, 170, 75, 0.1)'
+                        },
+                ticks: {
+                  beginAtZero: true,
+                  autoSkip: false,
+                  maxTicksLimit: 100,
+                  responsive: true
+                }
+              }],
+              xAxes: [{
+              gridLines: {
+                            display: false
+                        },
+                ticks: {
+                  autoSkip: false,
+                  responsive: true
+                }
+              }]
+            }
+          }
+        });
+        }
+        else{
         LicenseType = new Chart(document.getElementById("LicenseType"), {
           type: 'doughnut',
           data: {
@@ -432,6 +475,7 @@ $(function() {
             }]
           },
         });
+        }
       },
       complete: function (data) {
            $("#licenseSpinner").css('display', 'none');
