@@ -3,4 +3,4 @@ import os
 
 
 if __name__ == "__main__":
-    app.run(port=os.getenv("PORT"), threaded=True)
+    app.run(port=int(os.getenv("PORT")), threaded=True)
