@@ -3,3 +3,4 @@ Flask-Cors==3.0.3
 pymongo
 requests==2.14.2
 gunicorn==19.7.1
+XlsxWriter==0.7.3

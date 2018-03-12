@@ -1,8 +1,9 @@
 import io
 from flask import Flask, render_template, request, send_file
-from api_modules.module import request_router, request_xlsx
-import pandas as pd
-from pandas.io.json import json_normalize
+from api_modules.module import request_router, json_to_excel
+import xlsxwriter
+import json
+
 
 app = Flask(__name__)
 
@@ -141,28 +142,28 @@ def get_team_new_work():
     return request_router(request.full_path)
 
 
-@app.route('/report_percent_readme')
-def get_report_percent_readme():
-    query_result = request_xlsx(request.full_path)
-    query_result = json_normalize(query_result)
-    query_result["readme"] = query_result["readme"].astype(str)
+@app.route('/report_consolidate_readme')
+def get_report_consolidate_readme():
+    query_result = request_router(request.full_path)
     output = io.BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    query_result.to_excel(writer, sheet_name='Sheet1', index=False)
-    writer.close()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
     output.seek(0)
-    return send_file(output, attachment_filename="{}".format("report_percent_readme.xlsx"), as_attachment=True)
+    return send_file(output, attachment_filename="{}".format("report_consolidate_readme.xlsx"), as_attachment=True)
 
 
 @app.route('/report_readme')
 def get_report_readme():
-    query_result = request_xlsx(request.full_path)
-    query_result = json_normalize(query_result)
-    query_result["repository"] = query_result["repository"].astype(str)
+    query_result = request_router(request.full_path)
     output = io.BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    query_result.to_excel(writer, sheet_name='Sheet1', index=False)
-    writer.close()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
     output.seek(0)
     return send_file(output, attachment_filename="{}".format("report_readme.xlsx"), as_attachment=True)
 
