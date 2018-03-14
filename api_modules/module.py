@@ -16,8 +16,8 @@ def json_to_excel(ws, data, row=0):
             if row == 0:
                 ws.write(row, col, key)
             else:
-                if value is None:
-                    value = 'None'
+                if type(value) != str:
+                    value = str(value)
                 ws.write(row, col, value)
             col += 1
         row += 1

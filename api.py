@@ -168,6 +168,20 @@ def get_report_readme():
     return send_file(output, attachment_filename="{}".format("report_readme.xlsx"), as_attachment=True)
 
 
+@app.route('/report_team_repository_info')
+def report_team_repository_info():
+    query_result = request_router(request.full_path)
+    print(query_result)
+    output = io.BytesIO()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
+    output.seek(0)
+    return send_file(output, attachment_filename="{}".format("report_team_repository_info.xlsx"), as_attachment=True)
+
+
 # Users
 @app.route('/user_avatar')
 def get_avatar():
