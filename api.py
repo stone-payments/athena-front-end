@@ -171,7 +171,6 @@ def get_report_readme():
 @app.route('/report_team_repository_info')
 def report_team_repository_info():
     query_result = request_router(request.full_path)
-    print(query_result)
     output = io.BytesIO()
     data = json.loads(query_result)
     wb = xlsxwriter.Workbook(output)

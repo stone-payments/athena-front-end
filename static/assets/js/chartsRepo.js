@@ -250,11 +250,13 @@ $(function() {
         $("#openSource").empty();
         $("#license").empty();
         $("#forks").empty();
+        $("#readmeLanguage").empty();
         $('#stargazers').empty();
         $("#orgLastUpdated").empty();
         $("#description").empty();
         let repoName = String(returnedData[0]['repoName']);
         let forks = String(returnedData[0]['forks']);
+        let readmeLanguage = String(returnedData[0]['readmeLanguage']);
         let stargazers = String(returnedData[0]['stargazers']);
         let openSource = String(returnedData[0]['openSource']);
         let description = (String(returnedData[0]['description']) == '<div></div>' ? "Description not available" : String(returnedData[0]['description']));
@@ -268,6 +270,7 @@ $(function() {
         $('#stargazers').append(stargazers);
         $('#repoName').text(repoName);
         $('#forks').append(forks);
+        $('#readmeLanguage').append(readmeLanguage);
         $("#description").append(description);
         $('#orgLastUpdated').html('<i class="fa fa-clock-o"></i> '+ orgLastUpdated + ' minutes ago');
 

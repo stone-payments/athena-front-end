@@ -1713,7 +1713,7 @@ body > .navbar-collapse {
 .card-user .title {
   line-height: 24px; }
 .card-user .content {
-  min-height: 185px; }
+  min-height: 330px; }
 
 .card-user .footer,
 .card-price .footer {
@@ -2856,7 +2856,7 @@ body > .navbar-collapse {
     -ms-overflow-style: -ms-autohiding-scrollbar;
     -webkit-overflow-scrolling: touch; } }
 
-#readme,#openSource,#license,#stargazers,#forks{
+#readme,#openSource,#license,#stargazers,#forks,#readmeLanguage{
   text-align: center;
 }
 
