@@ -91,6 +91,16 @@ def get_issues_org():
     return request_router(request.full_path)
 
 
+@app.route('/org_readme_languages')
+def get_readme_languages():
+    return request_router(request.full_path)
+
+
+@app.route('/org_open_source_readme_languages')
+def get_open_source_readme_languages():
+    return request_router(request.full_path)
+
+
 # Team
 @app.route('/team_check_with_exist')
 def team_check_with_exist():
@@ -139,6 +149,11 @@ def get_team_name():
 
 @app.route('/team_new_work')
 def get_team_new_work():
+    return request_router(request.full_path)
+
+
+@app.route('/team_readme_languages')
+def get_team_readme_languages():
     return request_router(request.full_path)
 
 

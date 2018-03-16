@@ -6,6 +6,8 @@ $(function() {
   let readmeChart = null;
   let openSourceReadme = null;
   let LicenseType = null;
+  let readmeLanguages = null;
+  let openSourceReadmeLanguages = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
   let lastDay = moment().format('YYYY-MM-DD')
   colors = ['#0e6251', '#117864', '#148f77', '#17a589', '#1abc9c', '#48c9b0', '#76d7c4', '#a3e4d7', '#d1f2eb',
@@ -334,6 +336,132 @@ $(function() {
         console.log(error);
         if (openSourceReadme != null) {
           openSourceReadme.destroy();
+        }
+      }
+    });
+    $.ajax({
+      url: '/org_readme_languages?name=' + name,
+      type: 'GET',
+      success: function(response) {
+        returnedData = JSON.parse(response);
+        let labelsReadmeLanguage = returnedData.map(function(num) {
+          return num.readmeLanguage;
+        });
+        let dataReadmeLanguage = returnedData.map(function(num) {
+          return num.count;
+        });
+        if (readmeLanguages != null) {
+          readmeLanguages.destroy();
+        }
+        readmeLanguages = new Chart(document.getElementById("readmeLanguages"), {
+          type: 'bar',
+          data: {
+            labels: labelsReadmeLanguage,
+            datasets: [{
+              label: "Readme Language",
+              backgroundColor: colorStone,
+              borderWidth: 1,
+              data: dataReadmeLanguage
+            }]
+          },
+          options: {
+            tooltips: {
+              mode: 'index',
+              intersect: false
+            },
+            scales: {
+              xAxes: [{
+              gridLines: {
+                            display: false
+                        },
+                ticks: {
+                  autoSkip: false,
+                  responsive: true
+                }
+              }],
+              yAxes: [{
+              gridLines: {
+                            drawBorder: true,
+                            color: 'rgba(18, 170, 75, 0.1)'
+                        },
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 100,
+                  responsive: true,
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+      },
+      error: function(error) {
+        console.log(error);
+        if (readmeLanguages != null) {
+          readmeLanguages.destroy();
+        }
+      }
+    });
+    $.ajax({
+      url: '/org_open_source_readme_languages?name=' + name,
+      type: 'GET',
+      success: function(response) {
+        returnedData = JSON.parse(response);
+        let labelsOpenReadmeLanguage = returnedData.map(function(num) {
+          return num.readmeLanguage;
+        });
+        let dataOpenReadmeLanguage = returnedData.map(function(num) {
+          return num.count;
+        });
+        if (openSourceReadmeLanguages != null) {
+          openSourceReadmeLanguages.destroy();
+        }
+        openSourceReadmeLanguages = new Chart(document.getElementById("openSourceReadmeLanguages"), {
+          type: 'bar',
+          data: {
+            labels: labelsOpenReadmeLanguage,
+            datasets: [{
+              label: "OpenSource Readme Language",
+              backgroundColor: colorStone,
+              borderWidth: 1,
+              data: dataOpenReadmeLanguage
+            }]
+          },
+          options: {
+            tooltips: {
+              mode: 'index',
+              intersect: false
+            },
+            scales: {
+              xAxes: [{
+              gridLines: {
+                            display: false
+                        },
+                ticks: {
+                  autoSkip: false,
+                  responsive: true
+                }
+              }],
+              yAxes: [{
+              gridLines: {
+                            drawBorder: true,
+                            color: 'rgba(18, 170, 75, 0.1)'
+                        },
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 100,
+                  responsive: true,
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+      },
+      error: function(error) {
+        console.log(error);
+        if (openSourceReadmeLanguages != null) {
+          openSourceReadmeLanguages.destroy();
         }
       }
     });
