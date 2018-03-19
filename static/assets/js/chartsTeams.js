@@ -6,6 +6,7 @@ $(function() {
   let openSourceChart = null;
   let readmeChart = null;
   let LicenseType = null;
+  let readmeLanguage = null;
   let startDay = moment().startOf('month').format('YYYY-MM-DD');
   let lastDay = moment().format('YYYY-MM-DD')
    $('#orgSelector').on('change', function() {
@@ -40,6 +41,7 @@ $(function() {
     $("#languageSpinner").html(spinner);
     $("#issuesSpinner").html(spinner);
     $("#newWorkSpinner").html(spinner);
+    $("readmeLanguageSpinner").html(spinner);
     $.ajax({
               url: '/org_names',
               type: 'GET',
@@ -479,6 +481,89 @@ $(function() {
       },
       complete: function (data) {
            $("#licenseSpinner").css('display', 'none');
+         },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+
+    $.ajax({
+      url: '/team_readme_languages?org=' + orgSelector + '&name=' + name,
+      type: 'GET',
+      beforeSend: function() {
+      if (readmeLanguage != null) {
+          readmeLanguage.destroy();
+        }
+         $("#readmeLanguageSpinner").css('display', 'flex')
+      },
+      success: function(response) {
+        returnedData = JSON.parse(response);
+        let labelsLicense = returnedData.map(function(num) {
+          return num.language;
+        });
+        let dataLicense = returnedData.map(function(num) {
+          return num.count;
+        });
+        if (labelsLicense.length > 3){
+        readmeLanguage = new Chart(document.getElementById("readmeLanguage"), {
+          type: 'bar',
+          data: {
+            labels: labelsLicense,
+            datasets: [{
+              label: "Languages (%)",
+              backgroundColor: colorStone,
+              borderWidth: 1,
+              data: dataLicense
+            }]
+          },
+          options: {
+            tooltips: {
+              mode: 'index',
+              intersect: false
+            },
+            scales: {
+              yAxes: [{
+              gridLines: {
+                            drawBorder: true,
+                            color: 'rgba(18, 170, 75, 0.1)'
+                        },
+                ticks: {
+                  beginAtZero: true,
+                  autoSkip: false,
+                  maxTicksLimit: 100,
+                  responsive: true
+                }
+              }],
+              xAxes: [{
+              gridLines: {
+                            display: false
+                        },
+                ticks: {
+                  autoSkip: false,
+                  responsive: true
+                }
+              }]
+            }
+          }
+        });
+        }
+        else{
+        readmeLanguage = new Chart(document.getElementById("readmeLanguage"), {
+          type: 'doughnut',
+          data: {
+            labels: labelsLicense,
+            datasets: [{
+              label: "License (%)",
+              backgroundColor: colorStone,
+              borderWidth: 1,
+              data: dataLicense
+            }]
+          },
+        });
+        }
+      },
+      complete: function (data) {
+           $("#readmeLanguageSpinner").css('display', 'none');
          },
       error: function(error) {
         console.log(error);

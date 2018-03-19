@@ -91,6 +91,16 @@ def get_issues_org():
     return request_router(request.full_path)
 
 
+@app.route('/org_readme_languages')
+def get_readme_languages():
+    return request_router(request.full_path)
+
+
+@app.route('/org_open_source_readme_languages')
+def get_open_source_readme_languages():
+    return request_router(request.full_path)
+
+
 # Team
 @app.route('/team_check_with_exist')
 def team_check_with_exist():
@@ -142,6 +152,11 @@ def get_team_new_work():
     return request_router(request.full_path)
 
 
+@app.route('/team_readme_languages')
+def get_team_readme_languages():
+    return request_router(request.full_path)
+
+
 @app.route('/report_consolidate_readme')
 def get_report_consolidate_readme():
     query_result = request_router(request.full_path)
@@ -171,7 +186,6 @@ def get_report_readme():
 @app.route('/report_team_repository_info')
 def report_team_repository_info():
     query_result = request_router(request.full_path)
-    print(query_result)
     output = io.BytesIO()
     data = json.loads(query_result)
     wb = xlsxwriter.Workbook(output)
