@@ -157,6 +157,11 @@ def get_team_readme_languages():
     return request_router(request.full_path)
 
 
+@app.route('/team_repositories_readme')
+def get_team_repositories_readme():
+    return request_router(request.full_path)
+
+
 @app.route('/report_consolidate_readme')
 def get_report_consolidate_readme():
     query_result = request_router(request.full_path)
