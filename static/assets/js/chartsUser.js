@@ -153,9 +153,11 @@ $(function() {
     $.ajax({
       url: '/user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
+      beforeSend: function() {
+         $("#contributed_repo").empty();
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
-        $("#contributed_repo").empty();
         returnedData.map(function(num) {
           repoName = num.repoName;
           org = num.org;
@@ -180,9 +182,11 @@ $(function() {
     $.ajax({
       url: '/user_team?name=' + name,
       type: 'GET',
+      beforeSend: function() {
+         $("#user_teams").empty();
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
-        $("#user_teams").empty();
         returnedData.map(function(num) {
           teamName = num.teamName;
           org = num.org;
