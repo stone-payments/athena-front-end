@@ -162,7 +162,7 @@
 							<div class="card">
 								<div class="header">
 									<h4 class="title">Commits</h4>
-									<p class="category">Commits - Team</p>
+									<p class="category">Commits on default branch - Team</p>
 								</div>
 								<div class="content" style="max-height:500px">
 									<div class="table-full-width">
@@ -179,6 +179,22 @@
 							</div>
 						</div>
 
+
+						<div class="col-md-12 col-lg-8 .col-xl-12">
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Languages</h4>
+									<p class="category">Top 12 Languages - Team (%)</p>
+								</div>
+								<div class="content">
+									<div id="languageSpinner" class="spinnercss"></div>
+									<canvas id="languages" class="display-none ct-chart ct-perfect-fourth" width="auto" height="100"></canvas>
+									<div class="footer">
+										<hr>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="col-md-12 col-lg-4 .col-xl-4">
 							<div class="card ">
 								<div class="header">
@@ -199,24 +215,27 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4 col-lg-8 .col-xl-4">
-							<div class="card">
+
+						<div class="col-md-4 col-lg-4 .col-xl-4">
+							<div class="card ">
 								<div class="header">
-									<h4 class="title">Languages</h4>
-									<p class="category">Top 12 Languages - Team (%)</p>
+									<h4 class="title">Repositories / Readme</h4>
+									<p class="category">Team Repositories / Readme</p>
 								</div>
-								<div class="content">
-									<div id="languageSpinner" class="spinnercss"></div>
-									<canvas id="languages" class="display-none ct-chart ct-perfect-fourth" width="auto" height="100"></canvas>
+								<div class="content" style="overflow: auto;max-height:400px;">
+									<div class="table-full-width">
+										<table class="table">
+											<tbody id="team_repositories_readme">
+											</tbody>
+										</table>
+									</div>
 									<div class="footer">
 										<hr>
 									</div>
 								</div>
 							</div>
 						</div>
-
-
-						<div class="col-md-8 col-lg-12 .col-xl-8">
+						<div class="col-md-8 col-lg-8 .col-xl-8">
 
 							<div class="card ">
 								<div class="header">
@@ -225,7 +244,7 @@
 								</div>
 								<div class="content">
 									<div id="issuesSpinner" class="spinnercss"></div>
-									<canvas id="issuesChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="70"></canvas>
+									<canvas id="issuesChart" class="display-none ct-chart ct-perfect-fourth" width="auto" height="100"></canvas>
 									<div class="footer">
 										<div class="legend">
 										</div>
@@ -237,8 +256,12 @@
 						<div class="col-md-8">
 							<div class="card ">
 								<div class="header">
-									<h4 class="title">New Work - Code Refactor</h4>
-									<p class="category">New Work - Refactor - Commits scatter box</p>
+									<h4 class="title">New Work / Code Refactor</h4>
+									<i class="right fa fa-info-circle"
+									   title="Lower Commiter / Higher Commiter = commit frequency on weekdays">
+
+									</i>
+									<p class="category">New Work / Refactor - Commits scatter box</p>
 								</div>
 								<div class="content">
 									<div id="newWorkSpinner" class="spinnercss"></div>
@@ -271,6 +294,7 @@
 								</div>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</div>

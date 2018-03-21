@@ -486,7 +486,41 @@ $(function() {
         console.log(error);
       }
     });
-
+    $.ajax({
+      url: '/team_repositories_readme?org=' + orgSelector + '&name=' + name,
+      type: 'GET',
+      success: function(response) {
+        returnedData = JSON.parse(response);
+        $("#team_repositories_readme").empty();
+        returnedData.map(function(num) {
+          repoName = num.repoName;
+          status = num.status;
+          if(status === "None"){
+            flag = "danger";
+          }
+          else if(status === "Poor"){
+            flag = "warning";
+          }
+          else {
+            flag = "success";
+          }
+          html =   `<tr class="elements-list" onclick="window.location='/repos?org=${orgSelector}&name=${repoName}';" style="cursor: pointer;">
+                        <td style="width:10px;">
+                                <i class="pe-7s-angle-right-circle"></i>
+                        </td>
+                        <td>${repoName}
+                        </td>
+                        <td class="td-actions text-right">
+                        <span class="label label-${flag}">${status}</span>
+                        </td>
+                    </tr>`
+          $("#team_repositories_readme").append(html);
+        });
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
     $.ajax({
       url: '/team_readme_languages?org=' + orgSelector + '&name=' + name,
       type: 'GET',

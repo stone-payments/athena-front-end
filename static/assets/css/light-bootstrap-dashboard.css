@@ -948,7 +948,7 @@ body > .navbar-collapse {
     padding-left: 3px;
     padding-right: 3px; }
 .table .td-actions {
-  min-width: 90px; }
+  min-width: 40px; }
 .table > tbody > tr {
   position: relative; }
   .table > tbody > tr:hover .td-actions .btn {
@@ -2869,4 +2869,10 @@ body > .navbar-collapse {
     color: white;
     border-radius: 5px;
     width: 32px;
+}
+
+.right{
+    float:right;
+    margin-right:20px;
+    font-size:15px;
 }
