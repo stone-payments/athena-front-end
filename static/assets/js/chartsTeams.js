@@ -489,9 +489,11 @@ $(function() {
     $.ajax({
       url: '/team_repositories_readme?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+      $("#team_repositories_readme").empty();
+      },
       success: function(response) {
         returnedData = JSON.parse(response);
-        $("#team_repositories_readme").empty();
         returnedData.map(function(num) {
           repoName = num.repoName;
           status = num.status;
