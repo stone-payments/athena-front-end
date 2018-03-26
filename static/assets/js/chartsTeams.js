@@ -73,7 +73,6 @@ $(function() {
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
      $.getJSON('/team_name?name=' + term+'&org='+ orgSelector, function(result) {
-        console.log(result)
         let returnedData = result.map(function(num) {
           return num.slug;
         });
@@ -101,6 +100,9 @@ $(function() {
     $.ajax({
       url: '/team_check_with_exist?org=' + orgSelector + '&name=' + name,
       type: 'GET',
+      beforeSend: function() {
+       $("#teamLastUpdated").empty();
+       },
       success: function(response) {
         returnedData = JSON.parse(response);
         if (returnedData['response'] == 404){
@@ -121,6 +123,8 @@ $(function() {
         }
         else {
           $(".content").show();
+          let teamLastUpdated = String(returnedData[0]['db_last_updated']);
+        $('#teamLastUpdated').html('<i class="fa fa-clock-o"></i> '+ teamLastUpdated + ' minutes ago');
         }
       },
       error: function(error) {
@@ -182,7 +186,6 @@ $(function() {
       success: function(response) {
         returnedData = JSON.parse(response);
         average = returnedData[1];
-        console.log(average);
         returnedData = returnedData[0];
     let info = returnedData.map(function(data) {
           return data[0];
@@ -366,6 +369,7 @@ $(function() {
       url: '/team_readme?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
+
        if (readmeChart != null) {
           readmeChart.destroy();
         }
@@ -794,7 +798,6 @@ $(function() {
       },
       success: function(response) {
         returnedData = JSON.parse(response);
-        console.log(returnedData);
         let labelsIssues1 = returnedData[0].map(function(num) {
           return num.day;
         });
