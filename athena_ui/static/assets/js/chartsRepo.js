@@ -10,7 +10,7 @@ $(function() {
   }),
 
   $.ajax({
-          url: '/org_names',
+          url: '/proxy/org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -42,7 +42,7 @@ $(function() {
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-     $.getJSON('/repo_name?name=' + term+'&org='+ orgSelector, function(result) {
+     $.getJSON('/proxy/repo_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.repoName;
         });
@@ -67,7 +67,7 @@ $(function() {
       lastDay = JSON.parse($("#repoRangeDate").val()).end;
     }
     $.ajax({
-      url: '/repo_languages?name=' + name+'&org='+ orgSelector,
+      url: '/proxy/repo_languages?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -146,7 +146,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/repo_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: '/proxy/repo_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -219,7 +219,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/repo_members?name=' + name+'&org='+ orgSelector,
+      url: '/proxy/repo_members?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -242,7 +242,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/repo_best_practices?name=' + name+'&org='+ orgSelector,
+      url: '/proxy/repo_best_practices?name=' + name+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -294,7 +294,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/repo_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
+      url: '/proxy/repo_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay+'&org='+ orgSelector,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

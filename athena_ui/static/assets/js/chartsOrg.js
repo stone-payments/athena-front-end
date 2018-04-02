@@ -32,7 +32,7 @@ $(function() {
                 </div>
             </div>`
     $.ajax({
-          url: '/org_names',
+          url: '/proxy/org_names',
           type: 'GET',
           success: function(response) {
             returnedData = JSON.parse(response);
@@ -65,7 +65,7 @@ $(function() {
       lastDay = JSON.parse($("#org").val()).end;
     }
     $.ajax({
-      url: '/org_info?name=' + name,
+      url: '/proxy/org_info?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -90,7 +90,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_languages?name=' + name,
+      url: '/proxy/org_languages?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -154,7 +154,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/org_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -229,7 +229,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_open_source?name=' + name,
+      url: '/proxy/org_open_source?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -266,7 +266,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_readme?name=' + name,
+      url: '/proxy/org_readme?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -303,7 +303,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_open_source_readme?name=' + name,
+      url: '/proxy/org_open_source_readme?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -340,7 +340,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_readme_languages?name=' + name,
+      url: '/proxy/org_readme_languages?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -403,7 +403,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_open_source_readme_languages?name=' + name,
+      url: '/proxy/org_open_source_readme_languages?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -466,7 +466,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_license?name=' + name,
+      url: '/proxy/org_license?name=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -529,7 +529,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/org_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/org_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);

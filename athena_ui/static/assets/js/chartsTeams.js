@@ -43,7 +43,7 @@ $(function() {
     $("#newWorkSpinner").html(spinner);
     $("readmeLanguageSpinner").html(spinner);
     $.ajax({
-              url: '/org_names',
+              url: '/proxy/org_names',
               type: 'GET',
               success: function(response) {
                 returnedData = JSON.parse(response);
@@ -72,7 +72,7 @@ $(function() {
     minChars: 1,cache: false, delay : 20,
     source: function(term, response) {
     $('.autocomplete-suggestion').show();
-     $.getJSON('/team_name?name=' + term+'&org='+ orgSelector, function(result) {
+     $.getJSON('/proxy/team_name?name=' + term+'&org='+ orgSelector, function(result) {
         let returnedData = result.map(function(num) {
           return num.slug;
         });
@@ -98,7 +98,7 @@ $(function() {
       lastDay = JSON.parse($("#teamsRangeDate").val()).end;
     }
     $.ajax({
-      url: '/team_check_with_exist?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_check_with_exist?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
        $("#teamLastUpdated").empty();
@@ -133,7 +133,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/team_open_source?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_open_source?org=' + orgSelector + '&name=' + name,
       type: 'GET',
        beforeSend: function() {
        if (openSourceChart != null) {
@@ -174,7 +174,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' +  orgSelector,
+      url: '/proxy/team_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' +  orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (work_profile != null) {
@@ -366,7 +366,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_readme?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_readme?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
 
@@ -409,7 +409,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/team_license?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_license?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       if (LicenseType != null) {
@@ -491,7 +491,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_repositories_readme?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_repositories_readme?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       $("#team_repositories_readme").empty();
@@ -528,7 +528,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_readme_languages?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_readme_languages?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       if (readmeLanguage != null) {
@@ -611,7 +611,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/team_languages?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_languages?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
       if (languages != null) {
@@ -678,7 +678,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_repo_members?org=' + orgSelector + '&name=' + name,
+      url: '/proxy/team_repo_members?org=' + orgSelector + '&name=' + name,
       type: 'GET',
       beforeSend: function() {
          $("#members").empty();
@@ -709,7 +709,7 @@ $(function() {
     });
 
     $.ajax({
-      url: '/team_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/proxy/team_commits?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (commitsChart != null) {
@@ -788,7 +788,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/team_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
+      url: '/proxy/team_issues?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay + '&org=' + orgSelector,
       type: 'GET',
       beforeSend: function() {
       if (issuesChart != null) {
