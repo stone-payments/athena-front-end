@@ -15,7 +15,7 @@ $(function() {
       minChars: 1,cache: false, delay : 20,
       source: function(term, response) {
       $('.autocomplete-suggestion').show();
-       $.getJSON('/user_login?name=' + term, function(result) {
+       $.getJSON('/proxy/user_login?name=' + term, function(result) {
           let returnedData = result.map(function(num) {
             return num.login;
           });
@@ -42,7 +42,7 @@ $(function() {
       lastDay = JSON.parse($("#userRangeDate").val()).end;
     }
     $.ajax({
-      url: '/user_avatar?login=' + name,
+      url: '/proxy/user_avatar?login=' + name,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -79,7 +79,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/user_commit?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -151,7 +151,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/user_contributed_repo?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       beforeSend: function() {
          $("#contributed_repo").empty();
@@ -180,7 +180,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/user_team?name=' + name,
+      url: '/proxy/user_team?name=' + name,
       type: 'GET',
       beforeSend: function() {
          $("#user_teams").empty();
@@ -210,7 +210,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/user_stats?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
@@ -296,7 +296,7 @@ $(function() {
       }
     });
     $.ajax({
-      url: '/user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
+      url: '/proxy/user_new_work?name=' + name + '&startDate=' + startDay + '&endDate=' + lastDay,
       type: 'GET',
       success: function(response) {
         returnedData = JSON.parse(response);
