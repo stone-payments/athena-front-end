@@ -16,4 +16,12 @@ install:
 server-dev:
 	$(call activate_env) && PYTHONPATH=. FLASK_APP=athena_ui.api:app FLASK_DEBUG=1 flask run
 
+docker-build:
+	docker build -t athena-ui:dev .
+
+docker-run:
+	docker run -p 5000:5000 athena-ui:dev
+
+docker: docker-build docker-run
+
 reset: clean virtualenv install
