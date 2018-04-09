@@ -2,10 +2,11 @@ import requests
 import json
 import os
 
+ROUTER_URL = os.getenv("ROUTER_URL")
+
 
 def request_router(path):
-    router_url = os.getenv("ROUTER_URL")
-    r = requests.get(router_url + path).json()
+    r = requests.get(ROUTER_URL + path).json()
     return json.dumps(r)
 
 
