@@ -1,6 +1,4 @@
-flask
-flask_login
-flask_migrate
-flask_wtf
-flask_sqlalchemy
-gunicorn
+Flask==0.12.1
+requests==2.14.2
+gunicorn==19.7.1
+XlsxWriter==0.7.3

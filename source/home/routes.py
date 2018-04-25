@@ -9,6 +9,8 @@ blueprint = Blueprint(
 )
 
 
+@blueprint.route('/')
+@blueprint.route('/orgs')
 @blueprint.route('/index')
 def index():
     return render_template('index.html')
@@ -17,8 +19,3 @@ def index():
 @blueprint.route('/index2')
 def index2():
     return render_template('index2.html')
-
-# @blueprint.route('/<template>')
-# def route_template(template):
-#     print(template)
-#     return render_template(template + '.html')

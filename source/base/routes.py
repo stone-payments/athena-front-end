@@ -1,8 +1,13 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+import io
+import json
+
+import xlsxwriter
+from flask import Blueprint, render_template, request, send_file
 from flask_login import (
     LoginManager
 )
-from .forms import LoginForm, CreateAccountForm
+
+from .module import request_router, json_to_excel
 
 # start the login system
 login_manager = LoginManager()
@@ -16,27 +21,58 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.route('/')
-def route_default():
-    return redirect('/home/index')
+@blueprint.route('/repos')
+def repos():
+    return render_template('repos.html')
 
 
-@blueprint.route('/<template>')
-def route_template(template):
-    return render_template(template + '.html')
+@blueprint.route('/teams')
+def teams():
+    return render_template('teams.html')
 
 
-@blueprint.route('/fixed_<template>')
-def route_fixed_template(template):
-    return render_template('fixed/fixed_{}.html'.format(template))
+@blueprint.route('/user')
+def users():
+    return render_template('user.html')
 
 
-@blueprint.route('/page_<error>')
-def route_errors(error):
-    return render_template('errors/page_{}.html'.format(error))
+@blueprint.route('/report_consolidate_readme')
+def get_report_consolidate_readme():
+    query_result = request_router(request.full_path)
+    output = io.BytesIO()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
+    output.seek(0)
+    return send_file(output, attachment_filename="{}".format("report_consolidate_readme.xlsx"), as_attachment=True)
 
 
-## Errors
+@blueprint.route('/report_readme')
+def get_report_readme():
+    query_result = request_router(request.full_path)
+    output = io.BytesIO()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
+    output.seek(0)
+    return send_file(output, attachment_filename="{}".format("report_readme.xlsx"), as_attachment=True)
+
+
+@blueprint.route('/report_team_repository_info')
+def report_team_repository_info():
+    query_result = request_router(request.full_path)
+    output = io.BytesIO()
+    data = json.loads(query_result)
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+    json_to_excel(ws, data)
+    wb.close()
+    output.seek(0)
+    return send_file(output, attachment_filename="{}".format("report_team_repository_info.xlsx"), as_attachment=True)
 
 
 @login_manager.unauthorized_handler
