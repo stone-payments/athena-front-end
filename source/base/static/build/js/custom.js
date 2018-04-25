@@ -336,49 +336,28 @@ if (typeof NProgress != 'undefined') {
 	function gd(year, month, day) {
 		return new Date(year, month - 1, day).getTime();
 	}
-	  
+
+	function ajax_call(callback, path, parameters){
+        parameter = `${parameters.join("&")}`;
+        url = `http://athena-api-staging.paas.in-1.stg.dc2.buy4.io/${path}?${parameter}`;
+	    $.ajax({
+              url: url,
+              type: 'GET',
+              success: function(response) {
+              console.log(response);
+                    callback(response);
+              }
+	    })
+	}
+
 	function init_commits_chart(){
-
-//	    if ($("#chart_plot_02").length){
-//			console.log('Plot2');
-//
-//			$.plot( $("#chart_plot_02"),
-//			[{
-//				label: "Email Sent",
-//				data: chart_plot_02_data,
-//				lines: {
-//					fillColor: "rgba(150, 202, 89, 0.12)"
-//				},
-//				points: {
-//					fillColor: "#fff" }
-//			}], chart_plot_02_settings);
-//
-//		}
-
-
-
-
-
-  $.ajax({
-      url: 'http://localhost:8000/proxy/org_commits?name=athena&startDate=2018-01-21&endDate=2018-01-21',
-      type: 'GET',
-      success: function(response) {
+            response = ajax_call(callback, 'org_commits', ['name=stone-payments', 'startDate=2017-01-21', 'endDate=2018-01-21']);
             console.log(response);
 
-                var myChart = echarts.init(document.getElementById('chart_plot_new'));
-
-                var base = +new Date(1968, 9, 3);
-                var oneDay = 24 * 3600 * 1000;
-                var date = [];
-
-                var data = [Math.random() * 300];
-
-                for (var i = 1; i < 20000; i++) {
-                    var now = new Date(base += oneDay);
-                    date.push([now.getDate(), now.getMonth() + 1, now.getFullYear()].join('/'));
-                    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-                }
-
+            function callback(response){
+                let myChart = echarts.init(document.getElementById('chart_plot_new'));
+                let date = response.map(function(num) {return num.day;});
+                let data = response.map(function(num) {return num.count;});
                 option = {
                     tooltip: {
                         trigger: 'axis',
@@ -386,7 +365,6 @@ if (typeof NProgress != 'undefined') {
                             return [pt[0], '10%'];
                         }
                     },
-
                     toolbox: {
                           show: true,
                           feature: {
@@ -420,7 +398,7 @@ if (typeof NProgress != 'undefined') {
                     },
                     yAxis: {
                         type: 'value',
-                        boundaryGap: [0, '100%']
+                        boundaryGap: [0, '0%']
                     },
                     grid: {
                         top:    10,
@@ -465,7 +443,7 @@ if (typeof NProgress != 'undefined') {
                         {
                             name:'dados',
                             type:'line',
-                            smooth:true,
+                            smooth:false,
                             symbol: 'none',
                             sampling: 'average',
                             itemStyle: {
@@ -489,8 +467,9 @@ if (typeof NProgress != 'undefined') {
                     ]
                 };
             myChart.setOption(option);
-            }})
+            }
         }
+
 
 
 	function init_flot_chart(){
@@ -844,50 +823,65 @@ if (typeof NProgress != 'undefined') {
 		console.log('init_chart_doughnut');
 	 
 		if ($('.canvasDoughnut').length){
-			
-		var chart_doughnut_settings = {
-				type: 'doughnut',
-				tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-				data: {
-					labels: [
-						"Symbian",
-						"Blackberry",
-						"Other",
-						"Android",
-						"IOS"
-					],
-					datasets: [{
-						data: [15, 20, 30, 10, 30],
-						backgroundColor: [
-							"#BDC3C7",
-							"#9B59B6",
-							"#E74C3C",
-							"#26B99A",
-							"#3498DB"
-						],
-						hoverBackgroundColor: [
-							"#CFD4D8",
-							"#B370CF",
-							"#E95E4F",
-							"#36CAAB",
-							"#49A9EA"
-						]
-					}]
-				},
-				options: { 
-					legend: false, 
-					responsive: false 
-				}
-			}
-		
-			$('.canvasDoughnut').each(function(){
-				
-				var chart_element = $(this);
-				var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
-				
-			});			
-		
-		}  
+
+            response = ajax_call(callback, 'org_open_source', ['name=stone-payments']);
+            console.log(response);
+
+            function callback(response){
+                 $(".tile_info").empty();
+                let labels = response.map(function(num) {
+                  return num.status;
+                });
+                let data = response.map(function(num) {
+                  return num.count;
+                });
+                response.map(function(num) {
+                    html =   `<tr>
+                              <td style="width:0px">
+                                <p><i class="fa fa-square blue"></i>${num.status} </p>
+                              </td>
+                              <td>${num.count}%</td>
+                            </tr>`
+                    $(".tile_info").append(html);
+                });
+
+                var chart_doughnut_settings = {
+                        type: 'doughnut',
+                        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+                        data: {
+                            labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: [
+
+                                    "#E74C3C",
+                                    "#26B99A",
+                                    "#3498DB"
+
+                                ],
+                                hoverBackgroundColor: [
+
+                                    "#E95E4F",
+                                    "#36CAAB",
+                                    "#49A9EA"
+                                ]
+                            }]
+                        },
+                        options: {
+                            legend: false,
+                            responsive: true
+                        }
+                    }
+
+                    $('.canvasDoughnut').each(function(){
+
+                        var chart_element = $(this);
+                        var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+                    });
+
+            }
+    }
 	   
 	}
 	   
