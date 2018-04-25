@@ -379,7 +379,7 @@ if (typeof NProgress != 'undefined') {
                                 show : true,
                                 title : 'dataView',
                                 readOnly: true,
-                                lang: ['edit', 'close']
+                                lang: ['', 'close']
                             },
                             restore: {
                               show: true,
@@ -404,7 +404,7 @@ if (typeof NProgress != 'undefined') {
                         top:    10,
                         bottom: 60,
                         left:   50,
-                        right:  50,
+                        right:  10,
                       },
                     splitLine: {
                       show: false,
@@ -815,34 +815,35 @@ if (typeof NProgress != 'undefined') {
 	
 	}  
 	   
-	   
-	function init_chart_doughnut(){
-				
-		if( typeof (Chart) === 'undefined'){ return; }
-		
-		console.log('init_chart_doughnut');
-	 
-		if ($('.canvasDoughnut').length){
+	function init_chart_open_source(){
 
-            response = ajax_call(callback, 'org_open_source', ['name=stone-payments']);
+		if( typeof (Chart) === 'undefined'){ return; }
+
+		console.log('init_chart_open_source');
+
+		if ($('#readmeChart').length){
+		    $("#readmeChartData").empty();
+            response = ajax_call(callback, 'org_readme', ['name=stone-payments']);
             console.log(response);
 
             function callback(response){
-                 $(".tile_info").empty();
+
                 let labels = response.map(function(num) {
                   return num.status;
                 });
                 let data = response.map(function(num) {
                   return num.count;
                 });
-                response.map(function(num) {
+                colors = ["#E74C3C","#26B99A","#3498DB"];
+                response.map(function(num, index) {
+                console.log(index);
                     html =   `<tr>
                               <td style="width:0px">
-                                <p><i class="fa fa-square blue"></i>${num.status} </p>
+                                <p><i class="fa fa-square" style="color:${colors[index]}"></i>${num.status} </p>
                               </td>
                               <td>${num.count}%</td>
                             </tr>`
-                    $(".tile_info").append(html);
+                    $("#readmeChartData").append(html);
                 });
 
                 var chart_doughnut_settings = {
@@ -873,7 +874,77 @@ if (typeof NProgress != 'undefined') {
                         }
                     }
 
-                    $('.canvasDoughnut').each(function(){
+                    $('#readmeChart').each(function(){
+
+                        let chart_element = $(this);
+                        let chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+                    });
+
+            }
+        }
+
+	}
+
+
+	function init_chart_doughnut(){
+				
+		if( typeof (Chart) === 'undefined'){ return; }
+		
+		console.log('init_chart_doughnut');
+	 
+		if ($('#openSourceChart').length){
+            $("#openSourceChartData").empty();
+            response = ajax_call(callback, 'org_open_source', ['name=stone-payments']);
+            console.log(response);
+
+            function callback(response){
+                let labels = response.map(function(num) {
+                  return num.status;
+                });
+                let data = response.map(function(num) {
+                  return num.count;
+                });
+                colors = ["#E74C3C","#26B99A","#3498DB"];
+                response.map(function(num, index) {
+                    html =   `<tr>
+                              <td style="width:0px">
+                                <p><i class="fa fa-square blue" style="color:${colors[index]}"></i>${num.status} </p>
+                              </td>
+                              <td>${num.count}%</td>
+                            </tr>`
+                    $("#openSourceChartData").append(html);
+                });
+
+                var chart_doughnut_settings = {
+                        type: 'doughnut',
+                        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+                        data: {
+                            labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: [
+
+                                    "#E74C3C",
+                                    "#26B99A",
+                                    "#3498DB"
+
+                                ],
+                                hoverBackgroundColor: [
+
+                                    "#E95E4F",
+                                    "#36CAAB",
+                                    "#49A9EA"
+                                ]
+                            }]
+                        },
+                        options: {
+                            legend: false,
+                            responsive: true
+                        }
+                    }
+
+                    $('#openSourceChart').each(function(){
 
                         var chart_element = $(this);
                         var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
@@ -5213,7 +5284,7 @@ if (typeof NProgress != 'undefined') {
 		init_autosize();
 		init_autocomplete();
 		init_commits_chart();
-				
+        init_chart_open_source();
 	});	
 	
 
