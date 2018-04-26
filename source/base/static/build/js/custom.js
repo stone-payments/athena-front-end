@@ -337,21 +337,21 @@ if (typeof NProgress != 'undefined') {
 		return new Date(year, month - 1, day).getTime();
 	}
 
-	function ajax_call(callback, path, parameters){
+	function ajaxCall(callback, path, parameters){
         parameter = `${parameters.join("&")}`;
-        url = `http://athena-api-staging.paas.in-1.stg.dc2.buy4.io/${path}?${parameter}`;
+        url = `/${path}?${parameter}`;
 	    $.ajax({
               url: url,
               type: 'GET',
               success: function(response) {
               console.log(response);
-                    callback(response);
+                    callback(JSON.parse(response));
               }
 	    })
 	}
 
 	function init_commits_chart(){
-            response = ajax_call(callback, 'org_commits', ['name=stone-payments', 'startDate=2017-01-21', 'endDate=2018-01-21']);
+            response = ajaxCall(callback, 'proxy/org_commits', ['name=stone-payments', 'startDate=2018-01-21', 'endDate=2018-05-21']);
             console.log(response);
 
             function callback(response){
@@ -814,7 +814,78 @@ if (typeof NProgress != 'undefined') {
 			icons.play();
 	
 	}  
-	   
+
+	function init_chart_open_source_readme_languages(){
+
+		if( typeof (Chart) === 'undefined'){ return; }
+
+		console.log('init_chart_open_source_readme_languages');
+
+		if ($('#openSourceReadmeLanguages').length){
+		    $("#openSourceReadmeLanguagesData").empty();
+            response = ajaxCall(callback, 'proxy/org_open_source_readme_languages', ['name=stone-payments']);
+            console.log(response);
+
+            function callback(response){
+                console.log(response);
+                let labels = response.map(function(num) {
+                  return num.status;
+                });
+                let data = response.map(function(num) {
+                  return num.count;
+                });
+                colors = ["#E74C3C","#26B99A","#3498DB"];
+                response.map(function(num, index) {
+                console.log(index);
+                    html =   `<tr>
+                              <td style="width:0px">
+                                <p><i class="fa fa-square" style="color:${colors[index]}"></i>${num.status} </p>
+                              </td>
+                              <td>${num.count}%</td>
+                            </tr>`
+                    $("#openSourceReadmeLanguagesData").append(html);
+                });
+
+                var chart_doughnut_settings = {
+                        type: 'doughnut',
+                        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+                        data: {
+                            labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: [
+
+                                    "#E74C3C",
+                                    "#26B99A",
+                                    "#3498DB"
+
+                                ],
+                                hoverBackgroundColor: [
+
+                                    "#E95E4F",
+                                    "#36CAAB",
+                                    "#49A9EA"
+                                ]
+                            }]
+                        },
+                        options: {
+                            legend: false,
+                            responsive: false
+                        }
+                    }
+
+                    $('#openSourceReadmeLanguages').each(function(){
+
+                        let chart_element = $(this);
+                        let chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+                    });
+
+            }
+        }
+
+	}
+
 	function init_chart_open_source(){
 
 		if( typeof (Chart) === 'undefined'){ return; }
@@ -823,11 +894,12 @@ if (typeof NProgress != 'undefined') {
 
 		if ($('#readmeChart').length){
 		    $("#readmeChartData").empty();
-            response = ajax_call(callback, 'org_readme', ['name=stone-payments']);
+            response = ajaxCall(callback, 'proxy/org_readme', ['name=stone-payments']);
             console.log(response);
 
             function callback(response){
-
+            console.log(typeof(response));
+                console.log(response);
                 let labels = response.map(function(num) {
                   return num.status;
                 });
@@ -870,7 +942,7 @@ if (typeof NProgress != 'undefined') {
                         },
                         options: {
                             legend: false,
-                            responsive: true
+                            responsive: false
                         }
                     }
 
@@ -895,7 +967,7 @@ if (typeof NProgress != 'undefined') {
 	 
 		if ($('#openSourceChart').length){
             $("#openSourceChartData").empty();
-            response = ajax_call(callback, 'org_open_source', ['name=stone-payments']);
+            response = ajaxCall(callback, 'proxy/org_open_source', ['name=stone-payments']);
             console.log(response);
 
             function callback(response){
@@ -940,7 +1012,7 @@ if (typeof NProgress != 'undefined') {
                         },
                         options: {
                             legend: false,
-                            responsive: true
+                            responsive: false
                         }
                     }
 
@@ -2606,6 +2678,26 @@ if (typeof NProgress != 'undefined') {
 			
 			}
 		}
+
+        /* ORG NAMES */
+
+        function init_chart_orgNames(){
+            $("#orgNames").empty();
+            response = ajaxCall(callback, 'proxy/org_names', []);
+            console.log(response);
+
+            function callback(response){
+                response.map(function(name) {
+                $('#orgNames')
+                 .append($("<option></option>")
+                 .attr("value",name.org)
+                 .text(name.org));
+            });
+            }
+
+        }
+
+
 
 		/* COMPOSE */
 		
@@ -5285,6 +5377,8 @@ if (typeof NProgress != 'undefined') {
 		init_autocomplete();
 		init_commits_chart();
         init_chart_open_source();
+        init_chart_open_source_readme_languages();
+        init_chart_orgNames();
 	});	
 	
 
