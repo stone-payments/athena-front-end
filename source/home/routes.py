@@ -37,6 +37,11 @@ def users():
     return render_template('user.html')
 
 
+@blueprint.route('/proxy/<path:path>')
+def proxy(path):
+    return request_router(f"/{path}?{request.query_string.decode('utf-8')}")
+
+
 @blueprint.route('/report_consolidate_readme')
 def get_report_consolidate_readme():
     query_result = request_router(request.full_path)
