@@ -344,16 +344,37 @@ if (typeof NProgress != 'undefined') {
               url: url,
               type: 'GET',
               success: function(response) {
-              console.log(response);
                     callback(JSON.parse(response));
               }
 	    })
 	}
 
-	function init_commits_chart(){
-            response = ajaxCall(callback, 'proxy/org_commits', ['name=stone-payments', 'startDate=2018-01-21', 'endDate=2018-05-21']);
-            console.log(response);
+	function startOrganization(organization, startDate, endDate){
+	            init_open_source(organization);
+			    init_commits_chart(organization, startDate, endDate);
+                init_chart_open_source(organization);
+                init_chart_open_source_readme_languages(organization);
+                OrganizationHeaderInfo(organization, startDate, endDate);
+			}
 
+    function OrganizationHeaderInfo(organization, startDate, endDate){
+        response = ajaxCall(callback, 'proxy/org_header_info', [`name=${organization}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+        function callback(response){
+            let users = response["users"];
+            let teams = response["teams"];
+            let repositories = response["repositories"];
+            let avgCommits = response["avgCommits"];
+            console.log(users);
+            $( "#usersCount" ).html( users );
+            $( "#teamsCount" ).html( teams );
+            $( "#repositoriesCount" ).html( repositories );
+            $( "#AvCommitsCount" ).html( avgCommits );
+        }
+    }
+
+	function init_commits_chart(name, startDate, endDate){
+	        console.log("ENTROU");
+            response = ajaxCall(callback, 'proxy/org_commits', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
             function callback(response){
                 let myChart = echarts.init(document.getElementById('chart_plot_new'));
                 let date = response.map(function(num) {return num.day;});
@@ -404,7 +425,7 @@ if (typeof NProgress != 'undefined') {
                         top:    10,
                         bottom: 60,
                         left:   50,
-                        right:  10,
+                        right:  50,
                       },
                     splitLine: {
                       show: false,
@@ -815,7 +836,7 @@ if (typeof NProgress != 'undefined') {
 	
 	}  
 
-	function init_chart_open_source_readme_languages(){
+	function init_chart_open_source_readme_languages(organization){
 
 		if( typeof (Chart) === 'undefined'){ return; }
 
@@ -823,9 +844,7 @@ if (typeof NProgress != 'undefined') {
 
 		if ($('#openSourceReadmeLanguages').length){
 		    $("#openSourceReadmeLanguagesData").empty();
-            response = ajaxCall(callback, 'proxy/org_open_source_readme_languages', ['name=stone-payments']);
-            console.log(response);
-
+            response = ajaxCall(callback, 'proxy/org_open_source_readme_languages', [`name=${organization}`]);
             function callback(response){
                 console.log(response);
                 let labels = response.map(function(num) {
@@ -886,7 +905,7 @@ if (typeof NProgress != 'undefined') {
 
 	}
 
-	function init_chart_open_source(){
+	function init_chart_open_source(organization){
 
 		if( typeof (Chart) === 'undefined'){ return; }
 
@@ -894,7 +913,7 @@ if (typeof NProgress != 'undefined') {
 
 		if ($('#readmeChart').length){
 		    $("#readmeChartData").empty();
-            response = ajaxCall(callback, 'proxy/org_readme', ['name=stone-payments']);
+            response = ajaxCall(callback, 'proxy/org_readme', [`name=${organization}`]);
             console.log(response);
 
             function callback(response){
@@ -959,7 +978,7 @@ if (typeof NProgress != 'undefined') {
 	}
 
 
-	function init_chart_doughnut(){
+	function init_open_source(organization){
 				
 		if( typeof (Chart) === 'undefined'){ return; }
 		
@@ -967,8 +986,7 @@ if (typeof NProgress != 'undefined') {
 	 
 		if ($('#openSourceChart').length){
             $("#openSourceChartData").empty();
-            response = ajaxCall(callback, 'proxy/org_open_source', ['name=stone-payments']);
-            console.log(response);
+            response = ajaxCall(callback, 'proxy/org_open_source', [`name=${organization}`]);
 
             function callback(response){
                 let labels = response.map(function(num) {
@@ -1950,11 +1968,7 @@ if (typeof NProgress != 'undefined') {
 				var optionSet1 = {
 				  startDate: moment().subtract(29, 'days'),
 				  endDate: moment(),
-				  minDate: '01/01/2012',
-				  maxDate: '12/31/2020',
-				  dateLimit: {
-					days: 60
-				  },
+				  maxDate: moment(),
 				  showDropdowns: true,
 				  showWeekNumbers: true,
 				  timePicker: false,
@@ -1997,6 +2011,11 @@ if (typeof NProgress != 'undefined') {
 				  console.log("hide event fired");
 				});
 				$('#reportrange_right').on('apply.daterangepicker', function(ev, picker) {
+				  console.log(picker.startDate.format('YYYY-MM-DD'));
+				  console.log(picker.endDate.format('YYYY-MM-DD'));
+				  console.log($('orgNames').val());
+				  startOrganization($('#orgNames').val(), picker.startDate.format('YYYY-MM-DD'), picker.endDate.format('YYYY-MM-DD'));
+
 				  console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
 				});
 				$('#reportrange_right').on('cancel.daterangepicker', function(ev, picker) {
@@ -2684,7 +2703,7 @@ if (typeof NProgress != 'undefined') {
         function init_chart_orgNames(){
             $("#orgNames").empty();
             response = ajaxCall(callback, 'proxy/org_names', []);
-            console.log(response);
+
 
             function callback(response){
                 response.map(function(name) {
@@ -4723,7 +4742,9 @@ if (typeof NProgress != 'undefined') {
 				}]
 			  });
 
-			} 
+			}
+
+
 			  
 			   //echart Map
 			  
@@ -5342,42 +5363,39 @@ if (typeof NProgress != 'undefined') {
 	$(document).ready(function() {
 				
 //		init_sparklines();
-		init_flot_chart();
-		init_sidebar();
-		init_wysiwyg();
+//		init_flot_chart();
+//		init_sidebar();
+//		init_wysiwyg();
 //		init_InputMask();
 //		init_JQVmap();
 //		init_cropper();
 //		init_knob();
-		init_IonRangeSlider();
+//		init_IonRangeSlider();
 //		init_ColorPicker();
-		init_TagsInput();
-		init_parsley();
-		init_daterangepicker();
+//		init_TagsInput();
+//		init_parsley();
+//		init_daterangepicker();
 		init_daterangepicker_right();
-		init_daterangepicker_single_call();
-		init_daterangepicker_reservation();
+//		init_daterangepicker_single_call();
+//		init_daterangepicker_reservation();
 //		init_SmartWizard();
-		init_EasyPieChart();
-		init_charts();
-		init_echarts();
-		init_morris_charts();
+//		init_EasyPieChart();
+//		init_charts();
+//		init_echarts();
+//		init_morris_charts();
 //		init_skycons();
 //		init_select2();
 //		init_validator();
 //		init_DataTables();
-		init_chart_doughnut();
+//		init_chart_doughnut();
 //		init_gauge();
 //		init_PNotify();
-		init_starrr();
+//		init_starrr();
 //		init_calendar();
 //		init_compose();
 		init_CustomNotification();
 		init_autosize();
 		init_autocomplete();
-		init_commits_chart();
-        init_chart_open_source();
-        init_chart_open_source_readme_languages();
         init_chart_orgNames();
 	});	
 	

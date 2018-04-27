@@ -9,50 +9,52 @@
 {% block content %}
   <div class="right_col" role="main">
 
-    <div class="row">
 
-      <div class="row top_tiles" style="margin: 10px 0;">
-        <div class="col-md-2 col-sm-3 col-xs-12 tile">
+    <div class="row top_tiles"  style="margin: 10px 0; margin-bottom: 0px;">
+        <div class="col-md-2 col-sm-3 col-xs-12 tile"  style="margin-bottom: 10px;">
           <select class="select2_single form-control" id="orgNames" tabindex="-1">
           </select>
         </div>
-        <div class="col-md-2 col-sm-3 col-xs-12 tile">
-          <div id="reportrange" class="form-control" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+        <div class="col-md-3 col-sm-3 col-xs-12 tile"  style="margin-bottom: 10px;">
+          <div id="reportrange_right" class="form-control" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
             <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
             <span>March 27, 2018 - April 25, 2018</span> <b class="caret"></b>
           </div>
         </div>
-        <div class="col-md-3 col-sm-3 col-xs-6 tile">
-          <button type="button" class="btn btn-success"><i class="fa fa-search"></i></button>
-        </div>
+        <!--<div class="col-md-3 col-sm-3 col-xs-12 tile">-->
+          <!--<button type="button" id="findButton" class="btn btn-success"><i class="fa fa-search"></i></button>-->
+        <!--</div>-->
       </div>
+    <div class="row">
+
+
     <!-- top tiles -->
             <div class="row top_tiles">
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-user"></i></div>
-                  <div class="count">450</div>
+                  <div class="count" id="usersCount">0</div>
                   <h3>Users</h3>
                 </div>
               </div>
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-users"></i></div>
-                  <div class="count">68</div>
+                  <div class="count" id="teamsCount">0</div>
                   <h3>Teams</h3>
                 </div>
               </div>
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-archive"></i></div>
-                  <div class="count">1254</div>
+                  <div class="count" id="repositoriesCount">0</div>
                   <h3>Repositories</h3>
                 </div>
               </div>
               <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-arrow-circle-o-up"></i></div>
-                  <div class="count">179</div>
+                  <div class="count" id="AvCommitsCount">0</div>
                   <h3>Avg Daily Commits</h3>
                 </div>
               </div>
@@ -216,7 +218,7 @@
       <div class="col-md-4 col-sm-4 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
-            <h2>Recent Activities <small>Sessions</small></h2>
+            <h2>Recent Activities <small></small></h2>
             <ul class="nav navbar-right panel_toolbox">
               <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
               </li>
@@ -297,7 +299,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>Visitors location <small>geo-presentation</small></h2>
+                <h2>Issues <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
