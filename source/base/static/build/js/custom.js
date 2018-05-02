@@ -352,9 +352,11 @@ if (typeof NProgress != 'undefined') {
 	function startOrganization(organization, startDate, endDate){
 	            init_open_source(organization);
 			    init_commits_chart(organization, startDate, endDate);
+			    init_issues_chart(organization, startDate, endDate);
                 init_chart_open_source(organization);
                 init_chart_open_source_readme_languages(organization);
                 OrganizationHeaderInfo(organization, startDate, endDate);
+                init_org_last_commit(organization);
 			}
 
     function OrganizationHeaderInfo(organization, startDate, endDate){
@@ -373,10 +375,9 @@ if (typeof NProgress != 'undefined') {
     }
 
 	function init_commits_chart(name, startDate, endDate){
-	        console.log("ENTROU");
             response = ajaxCall(callback, 'proxy/org_commits', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
             function callback(response){
-                let myChart = echarts.init(document.getElementById('chart_plot_new'));
+                let myChart = echarts.init(document.getElementById('orgCommitsChart'));
                 let date = response.map(function(num) {return num.day;});
                 let data = response.map(function(num) {return num.count;});
                 option = {
@@ -446,7 +447,7 @@ if (typeof NProgress != 'undefined') {
                     dataZoom: [{
                         type: 'inside',
                         start: 0,
-                        end: 10
+                        end: 100
                     }, {
                         start: 0,
                         end: 10,
@@ -483,7 +484,156 @@ if (typeof NProgress != 'undefined') {
                                     }])
                                 }
                             },
-                            data: data
+                            data: data,
+                             markLine : {
+                                data : [
+                                    {type : 'average', name: 'average'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+            myChart.setOption(option);
+            }
+        }
+
+
+    function init_issues_chart(name, startDate, endDate){
+            response = ajaxCall(callback, 'proxy/org_issues', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+            function callback(response){
+                let myChart = echarts.init(document.getElementById('orgIssuesChart'));
+                let date = response[0].map(function(num) {return num.day;});
+                let data1 = response[0].map(function(num) {return num.count;});
+                let data2 = response[1].map(function(num) {return num.count;});
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function (pt) {
+                            return [pt[0], '10%'];
+                        }
+                    },
+                    toolbox: {
+                          show: true,
+                          feature: {
+                            dataZoom : {
+                                show : false,
+                                title : {
+                                    dataZoom : 'dataZoom',
+                                    dataZoomReset : 'dataZoomReset'
+                                }
+                            },
+                            dataView : {
+                                show : true,
+                                title : 'dataView',
+                                readOnly: true,
+                                lang: ['', 'close']
+                            },
+                            restore: {
+                              show: true,
+                              title: "Restore"
+                            },
+                            saveAsImage: {
+                              show: true,
+                              title: "Save Image"
+                            }
+                          }
+                        },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '10%']
+                    },
+                    grid: {
+                        top:    10,
+                        bottom: 60,
+                        left:   50,
+                        right:  50,
+                      },
+                    splitLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    axisLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    dataZoom: [{
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    }, {
+                        start: 0,
+                        end: 10,
+                        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                        handleSize: '80%',
+                        handleStyle: {
+                            color: '#fff',
+                            shadowBlur: 3,
+                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                            shadowOffsetX: 2,
+                            shadowOffsetY: 2
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'Opened Issues',
+                            type:'line',
+                            smooth:false,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(26, 187, 90)'
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(46, 187, 156)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(26, 187, 90)'
+                                    }])
+                                }
+                            },
+                            data: data2
+                        },
+                        {
+                            name:'Closed Issues',
+                            type:'line',
+                            smooth:false,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(211, 76, 60)'
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(231, 76, 60)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(211, 76, 30)'
+                                    }])
+                                }
+                            },
+                            data: data1
                         }
                     ]
                 };
@@ -2712,6 +2862,36 @@ if (typeof NProgress != 'undefined') {
                  .attr("value",name.org)
                  .text(name.org));
             });
+            }
+
+        }
+
+         /* ORG LAST COMMITS */
+
+        function init_org_last_commit(name){
+            $("#orgLastCommits").empty();
+            response = ajaxCall(callback, 'proxy/org_last_commit', [`name=${name}`]);
+
+
+            function callback(response){
+                response.map(function(num, index) {
+                console.log(index);
+                    html =   `<li>
+                                  <div class="block">
+                                    <div class="block_content">
+                                      <h2 class="title">
+                                                        <a>${num.repo_name}</a>
+                                                    </h2><h5> on branch: ${num.branch_name}</h5>
+                                      <div class="byline">
+                                        <span>${num.committed_date}</span> by <a>${num.author} </a>
+                                      </div><br>
+                                      <p class="excerpt">${num.message_head_line}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </li>`
+                    $("#orgLastCommits").append(html);
+                });
             }
 
         }
