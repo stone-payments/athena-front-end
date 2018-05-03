@@ -357,13 +357,16 @@ if (typeof NProgress != 'undefined') {
                 init_chart_open_source_readme_languages(organization);
                 OrganizationHeaderInfo(organization, startDate, endDate);
                 init_org_last_commit(organization);
+                init_org_languages_chart(organization, startDate, endDate);
 			}
 
     function OrganizationHeaderInfo(organization, startDate, endDate){
         response = ajaxCall(callback, 'proxy/org_header_info', [`name=${organization}`, `startDate=${startDate}`, `endDate=${endDate}`]);
         function callback(response){
+        console.log(response);
             let users = response["users"];
             let teams = response["teams"];
+            console.log(teams);
             let repositories = response["repositories"];
             let avgCommits = response["avgCommits"];
             console.log(users);
@@ -488,6 +491,67 @@ if (typeof NProgress != 'undefined') {
                              markLine : {
                                 data : [
                                     {type : 'average', name: 'average'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+            myChart.setOption(option);
+            }
+        }
+
+    function init_org_languages_chart(name, startDate, endDate){
+            response = ajaxCall(callback, 'proxy/org_languages', [`name=${name}`]);
+            function callback(response){
+                let myChart = echarts.init(document.getElementById('orgLanguagesChart'));
+                let count = response.map(function(num) {return num.count;});
+                let languages = response.map(function(num) {return num.languages;});
+                option = {
+                    title : {
+                        text: 'Languages',
+                        subtext: ''
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['','']
+                    },
+                    toolbox: {
+                        show : true,
+                        feature : {
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : languages
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'%',
+                            type:'bar',
+                            data: count,
+                            markPoint : {
+                                data : [
+                                    {name : 'Python', value: "Python", xAxis: 1, yAxis: 15},
+                                    {name : '', value : 2.3, xAxis: 11}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name : ''}
                                 ]
                             }
                         }
@@ -2881,12 +2945,13 @@ if (typeof NProgress != 'undefined') {
                                     <div class="block_content">
                                       <h2 class="title">
                                                         <a>${num.repo_name}</a>
-                                                    </h2><h5> on branch: ${num.branch_name}</h5>
-                                      <div class="byline">
-                                        <span>${num.committed_date}</span> by <a>${num.author} </a>
-                                      </div><br>
+                                                    </h2>
+                                      <div class="byline"><span> on branch: ${num.branch_name}</span></div>
                                       <p class="excerpt">${num.message_head_line}
                                       </p>
+                                      <div class="byline">
+                                        <span>${num.committed_date}</span> by <a>${num.author} </a>
+                                      </div>
                                     </div>
                                   </div>
                                 </li>`
