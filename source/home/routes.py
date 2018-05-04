@@ -32,9 +32,9 @@ def teams():
     return render_template('teams.html')
 
 
-@blueprint.route('/user')
+@blueprint.route('/users')
 def users():
-    return render_template('user.html')
+    return render_template('profile.html')
 
 
 @blueprint.route('/proxy/<path:path>')

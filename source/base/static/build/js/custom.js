@@ -543,17 +543,21 @@ if (typeof NProgress != 'undefined') {
                             name:'%',
                             type:'bar',
                             data: count,
-                            markPoint : {
-                                data : [
-                                    {name : 'Python', value: "Python", xAxis: 1, yAxis: 15},
-                                    {name : '', value : 2.3, xAxis: 11}
-                                ]
+//                             color: ['blue','red','#e69d87','#8dc1a9','#ea7e53','#eedd78','#73a373','#73b9bc','#7289ab', '#91ca8c','#f49f42', '#73b9bc'],
+                            itemStyle: {
+                                normal: {
+                                    color: function(params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    },
+                                }
                             },
-                            markLine : {
-                                data : [
-                                    {type : 'average', name : ''}
-                                ]
-                            }
+
                         }
                     ]
                 };
@@ -705,7 +709,19 @@ if (typeof NProgress != 'undefined') {
             }
         }
 
-
+    function userHeaderInfo(name){
+        response = ajaxCall(callback, 'proxy/user_avatar', [`login=${name}`]);
+        function callback(response){
+        console.log(response);
+            let avatar = String(response[0]['avatar_url']);
+            let login = String(response[0]['login']);
+            let username = String(response[0]['dev_name']);
+            $('#avatar').attr("src", avatar);
+            $('#login').html(`${login}<small>Github Activity report</small>`);
+            $('#githubUrl').html(`<i class="fa fa-github user-profile-icon"></i><a href="https://github.com/${login}" target="_blank"> https://github.com/${login}</a>`);
+            $('#username').text(`${username}`);
+        }
+    }
 
 	function init_flot_chart(){
 		
@@ -2956,6 +2972,38 @@ if (typeof NProgress != 'undefined') {
                                   </div>
                                 </li>`
                     $("#orgLastCommits").append(html);
+                });
+            }
+
+        }
+
+        /* USER LAST COMMITS */
+
+        function init_user_last_commit(name){
+            $("#userLastComiits").empty();
+            response = ajaxCall(callback, 'proxy/user_last_commit', [`name=${name}`]);
+
+
+            function callback(response){
+                response.map(function(num, index) {
+                console.log(index);
+                    html =   `<li>
+                                  <img src=${document.getElementById( 'avatar' ).src} class="avatar" alt="Avatar">
+                                  <div class="message_date">
+                                    <h3 class="date text-info">${num.day}</h3>
+                                    <p class="month">${num.month}</p>
+                                  </div>
+                                  <div class="message_wrapper">
+                                    <h4 class="heading">${num.repo_name}</h4>
+                                    <blockquote class="message">${num.message_head_line}</blockquote>
+                                    <br />
+                                    <p class="url">
+                                      <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
+                                      <a href="#"><i class="fa fa-calendar"></i> ${num.committed_date} </a>
+                                    </p>
+                                  </div>
+                                </li>`
+                    $("#userLastComiits").append(html);
                 });
             }
 
@@ -5642,6 +5690,9 @@ if (typeof NProgress != 'undefined') {
 		init_autosize();
 		init_autocomplete();
         init_chart_orgNames();
+        init_commits_chart('stone-payments', '2018-01-05', '2018-04-05');
+        userHeaderInfo("mralves");
+        init_user_last_commit("mralves");
 	});	
 	
 
