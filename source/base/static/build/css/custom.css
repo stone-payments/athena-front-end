@@ -852,7 +852,6 @@ a:focus {
 .top_search .form-control {
     border-right: 0;
     box-shadow: inset 0 1px 0px rgba(0, 0, 0, 0.075);
-    border-radius: 25px 0px 0px 25px;
     padding-left: 20px;
     border: 1px solid rgba(221, 226, 232, 0.49)
 }
@@ -2912,8 +2911,9 @@ ul.count2 li span {
     margin: 10px 0
 }
 ul.messages {
-    padding: 0;
-    list-style: none
+    padding-right:10px;
+    padding-left:10px;
+    list-style: none;
 }
 ul.messages li,
 .tasks li {
@@ -2949,7 +2949,8 @@ ul.messages li .message_wrapper h4.heading {
 ul.messages li .message_wrapper blockquote {
     padding: 0px 10px;
     margin: 0;
-    border-left: 5px solid #eee
+    border-left: 5px solid #eee;
+    font-size:medium
 }
 ul.user_data li {
     margin-bottom: 6px
@@ -3487,6 +3488,17 @@ form:after {
     text-align: center;
     text-shadow: 0 1px 0 #fff;
     min-width: 280px
+}
+.btn-default:focus {
+    font-weight:bold;
+    color:white;
+    text-decoration: none;
+    background-color:#1d2838;
+}
+.btn-default {
+    font-weight:bold;
+    color:white;
+    background-color:#2a3c54;
 }
 .login_content a,
 .login_content .btn-default:hover {
@@ -4255,3 +4267,19 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     background-color: #ffff !important;
 }
 /** /bootstrap-datetimepicker **/
+
+.autocomplete-suggestions { padding-left:12px; background: #FFF; overflow: auto; }
+.autocomplete-suggestion {  padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+
+.avatar-center{
+    width: 100%;
+    text-align: center;
+}
+
+.large-text{
+    font-size:x-large;
+}

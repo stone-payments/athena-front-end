@@ -5,8 +5,8 @@ from os.path import abspath, dirname, join, pardir
 
 from flask import Flask
 
-from source.base.routes import login_manager
-from source.config import DebugConfig
+from base.routes import login_manager
+from config import DebugConfig
 
 # prevent python from writing *.pyc files / __pycache__ folders
 sys.dont_write_bytecode = True
