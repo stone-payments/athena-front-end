@@ -50,6 +50,7 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $FOOTER = $('footer')
     startDate = moment().subtract(29, 'days').format('YYYY-MM-DD'),
     endDate = moment().format('YYYY-MM-DD');
+    nameToFind = null;
 
 
 	
@@ -352,16 +353,39 @@ if (typeof NProgress != 'undefined') {
 	    })
 	}
 
+	function startData(startDate, endDate, name){
+	    switch(page){
+	        case 'org':
+	            console.log(startDate);
+	            console.log(endDate);
+	            startOrganization($('#orgNames').val(), startDate, endDate);
+	            break;
+	        case 'profile':
+	            console.log(startDate);
+	            console.log(endDate);
+	            console.log(name);
+	            startProfile(startDate, endDate, name);
+	            break;
+	    }
+	}
+
 	function startOrganization(organization, startDate, endDate){
-	            init_open_source(organization);
-			    init_commits_chart(organization, startDate, endDate);
-			    init_issues_chart(organization, startDate, endDate);
-                init_chart_open_source(organization);
-                init_chart_open_source_readme_languages(organization);
-                OrganizationHeaderInfo(organization, startDate, endDate);
-                init_org_last_commit(organization);
-                init_org_languages_chart(organization, startDate, endDate);
+            init_open_source(organization);
+            init_commits_chart(organization, startDate, endDate);
+            init_issues_chart(organization, startDate, endDate);
+            init_chart_open_source(organization);
+            init_chart_open_source_readme_languages(organization);
+            OrganizationHeaderInfo(organization, startDate, endDate);
+            init_org_last_commit(organization);
+            init_org_languages_chart(organization, startDate, endDate);
 			}
+
+	function startProfile(startDate, endDate, name){
+            userHeaderInfo(name);
+            init_user_last_commit(name);
+            userScatterBox(name, startDate, endDate);
+            init_commits_chart(name, startDate, endDate);
+	}
 
     function OrganizationHeaderInfo(organization, startDate, endDate){
         response = ajaxCall(callback, 'proxy/org_header_info', [`name=${organization}`, `startDate=${startDate}`, `endDate=${endDate}`]);
@@ -381,7 +405,7 @@ if (typeof NProgress != 'undefined') {
     }
 
 	function init_commits_chart(name, startDate, endDate){
-            response = ajaxCall(callback, 'proxy/org_commits', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+            response = ajaxCall(callback, `proxy/${commitsPath}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
             function callback(response){
                 let myChart = echarts.init(document.getElementById('orgCommitsChart'));
                 let date = response.map(function(num) {return num.day;});
@@ -469,7 +493,7 @@ if (typeof NProgress != 'undefined') {
                     }],
                     series: [
                         {
-                            name:'dados',
+                            name:'Commits',
                             type:'line',
                             smooth:false,
                             symbol: 'none',
@@ -1167,6 +1191,7 @@ if (typeof NProgress != 'undefined') {
             response = ajaxCall(callback, 'proxy/org_open_source_readme_languages', [`name=${organization}`]);
             function callback(response){
                 console.log(response);
+                let myChart = echarts.init(document.getElementById('openSourceReadmeLanguages'));
                 let labels = response.map(function(num) {
                   return num.status;
                 });
@@ -1185,40 +1210,52 @@ if (typeof NProgress != 'undefined') {
                     $("#openSourceReadmeLanguagesData").append(html);
                 });
 
-                var chart_doughnut_settings = {
-                        type: 'doughnut',
-                        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-                        data: {
-                            labels,
-                            datasets: [{
-                                data: data,
-                                backgroundColor: [
-
-                                    "#E74C3C",
-                                    "#26B99A",
-                                    "#3498DB"
-
-                                ],
-                                hoverBackgroundColor: [
-
-                                    "#E95E4F",
-                                    "#36CAAB",
-                                    "#49A9EA"
-                                ]
-                            }]
-                        },
-                        options: {
-                            legend: false,
-                            responsive: false
-                        }
+                option = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    series: [
+        {
+            name:'访问来源',
+            type:'pie',
+            radius: ['40%', '80%'],
+            avoidLabelOverlap: false,
+            label: {
+                normal: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    show: true,
+                    textStyle: {
+                        fontSize: '30',
+                        fontWeight: 'bold'
                     }
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data:response
+        }
+    ]
+};
 
-                    $('#openSourceReadmeLanguages').each(function(){
-
-                        let chart_element = $(this);
-                        let chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
-
-                    });
+//                    $('#openSourceReadmeLanguages').each(function(){
+//
+//                        let chart_element = $(this);
+//                        let chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+//
+//                    });
+                myChart.setOption(option);
 
             }
         }
@@ -1305,10 +1342,12 @@ if (typeof NProgress != 'undefined') {
 		console.log('init_chart_doughnut');
 	 
 		if ($('#openSourceChart').length){
+		    $("#openSourceChart").empty();
             $("#openSourceChartData").empty();
             response = ajaxCall(callback, 'proxy/org_open_source', [`name=${organization}`]);
 
             function callback(response){
+
                 let labels = response.map(function(num) {
                   return num.status;
                 });
@@ -1323,7 +1362,7 @@ if (typeof NProgress != 'undefined') {
                               </td>
                               <td>${num.count}%</td>
                             </tr>`
-                    $("#openSourceChartData").append(html);
+                    $("#openSourceChar4tData").append(html);
                 });
 
                 var chart_doughnut_settings = {
@@ -1546,24 +1585,38 @@ if (typeof NProgress != 'undefined') {
 			
 		};   
 	   
-	   
+	   function init_variables(){
+	        switch(page){
+	            case 'profile':
+	                autocompletePath = 'user_login';
+	                commitsPath = 'user_commits';
+	                break;
+	            case 'org':
+	                autocompletePath = null;
+	                commitsPath = 'org_commits';
+	                break;
+	        }
+
+	   }
 	   /* AUTOCOMPLETE */
 			
 		function init_autocomplete() {
 		$('#search-box').autocomplete({
 		    paramName:'name',
-            serviceUrl: '/proxy/user_login',
+            serviceUrl: `/proxy/${autocompletePath}`,
             onSelect: function (suggestion) {
                 console.log(suggestion);
                 if ($('#main-x-panel').attr('style')){
                      console.log("FOI");
                     $('.collapse-link').click();
                     }
-
-                userHeaderInfo(suggestion['data']);
-                init_user_last_commit(suggestion['data']);
-                userScatterBox(suggestion['data'], startDate, endDate);
-                init_commits_chart('stone-payments', '2018-01-05', '2018-04-05');
+                startData(startDate, endDate, suggestion['data']);
+                nameToFind = suggestion['data'];
+//                suggestion['data']
+//                userHeaderInfo(suggestion['data']);
+//                init_user_last_commit(suggestion['data']);
+//                userScatterBox(suggestion['data'], startDate, endDate);
+//                init_commits_chart('stone-payments', '2018-01-05', '2018-04-05');
 
             }
         });
@@ -2290,6 +2343,10 @@ if (typeof NProgress != 'undefined') {
 			});
 			$('#reportrange').on('apply.daterangepicker', function(ev, picker) {
 			  console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
+              startDate = picker.startDate.format('YYYY-MM-DD');
+              endDate = picker.endDate.format('YYYY-MM-DD');
+              console.log($('search-box').val());
+              startData(startDate, endDate, nameToFind);
 			});
 			$('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
 			  console.log("cancel event fired");
@@ -2362,10 +2419,9 @@ if (typeof NProgress != 'undefined') {
 				  console.log("hide event fired");
 				});
 				$('#reportrange_right').on('apply.daterangepicker', function(ev, picker) {
-				  console.log(picker.startDate.format('YYYY-MM-DD'));
-				  console.log(picker.endDate.format('YYYY-MM-DD'));
-				  console.log($('orgNames').val());
-				  startOrganization($('#orgNames').val(), picker.startDate.format('YYYY-MM-DD'), picker.endDate.format('YYYY-MM-DD'));
+				  startDate = picker.startDate.format('YYYY-MM-DD');
+				  endDate = picker.endDate.format('YYYY-MM-DD');
+				  startData(startDate, endDate, nameToFind);
 
 				  console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
 				});
@@ -5775,7 +5831,7 @@ if (typeof NProgress != 'undefined') {
 	   
 	   
 	$(document).ready(function() {
-				
+		init_variables();
 //		init_sparklines();
 //		init_flot_chart();
 //		init_sidebar();
@@ -5815,6 +5871,7 @@ if (typeof NProgress != 'undefined') {
 //        userHeaderInfo("mralves");
 //        init_user_last_commit("mralves");
 //        userScatterBox('mralves', '2018-01-05', '2018-04-05');
+
 	});	
 	
 
