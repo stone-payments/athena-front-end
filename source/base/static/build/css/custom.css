@@ -1947,7 +1947,9 @@ h4.graph_title {
     background: rgba(0, 0, 0, 0.15)
 }
 table.tile_info {
-    padding: 10px 15px
+    padding: 10px 15px;
+    margin-top: 5px;
+    margin-left:12px;
 }
 table.tile_info span.right {
     margin-right: 0;

@@ -370,14 +370,17 @@ if (typeof NProgress != 'undefined') {
 	}
 
 	function startOrganization(organization, startDate, endDate){
-            init_open_source(organization);
             init_commits_chart(organization, startDate, endDate);
             init_issues_chart(organization, startDate, endDate);
-            init_chart_open_source(organization);
-            init_chart_open_source_readme_languages(organization);
             OrganizationHeaderInfo(organization, startDate, endDate);
             init_org_last_commit(organization);
             init_org_languages_chart(organization, startDate, endDate);
+            init_pie_chart(organization, 'org_readme', "readmeChart",
+             "readmeChartData");
+            init_pie_chart(organization, 'org_open_source_readme_languages', "openSourceReadmeLanguages",
+             "openSourceReadmeLanguagesData");
+             init_pie_chart(organization, 'org_open_source', "openSourceChart",
+             "openSourceChartData");
 			}
 
 	function startProfile(startDate, endDate, name){
@@ -1178,9 +1181,82 @@ if (typeof NProgress != 'undefined') {
 
 			icons.play();
 	
-	}  
+	}
 
-	function init_chart_open_source_readme_languages(organization){
+	function init_pie_chart(organization, path, chartId, dataID){
+
+
+		if( typeof (Chart) === 'undefined'){ return; }
+
+
+		if ($(`#${chartId}`).length){
+
+		    $(`#${dataID}`).empty();
+            response = ajaxCall(callback, `proxy/${path}`, [`name=${organization}`]);
+            function callback(response){
+                console.log(chartId);
+                let myChart = echarts.init(document.getElementById(`${chartId}`));
+                let labels = response.map(function(num) {
+                  return num.name;
+                });
+                let data = response.map(function(num) {
+                  return num.value;
+                });
+                console.log("FOI");
+                colors = ["#E74C3C","#26B99A","#3498DB"];
+                response.map(function(num, index) {
+                console.log(index);
+                    html =   `<tr>
+                              <td style="width:0px">
+                                <p><i class="fa fa-square" style="color:${colors[index]}"></i>${num.name} </p>
+                              </td>
+                              <td>${num.value}%</td>
+                            </tr>`
+                    $(`#${dataID}`).append(html);
+                });
+
+                option = {
+                    tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                    calculable: true,
+                    series: [
+                    {
+                        name:'language',
+                        type:'pie',
+                        radius: ['55%', '85%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '12',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        data:response
+                    }
+                    ]
+                    };
+                myChart.setOption(option);
+
+            }
+        }
+
+	}
+
+	function init_chart_open_source_readme_languages(organization, path, dataID, chartId){
 
 		if( typeof (Chart) === 'undefined'){ return; }
 
@@ -1193,68 +1269,57 @@ if (typeof NProgress != 'undefined') {
                 console.log(response);
                 let myChart = echarts.init(document.getElementById('openSourceReadmeLanguages'));
                 let labels = response.map(function(num) {
-                  return num.status;
+                  return num.name;
                 });
                 let data = response.map(function(num) {
-                  return num.count;
+                  return num.value;
                 });
                 colors = ["#E74C3C","#26B99A","#3498DB"];
                 response.map(function(num, index) {
                 console.log(index);
                     html =   `<tr>
                               <td style="width:0px">
-                                <p><i class="fa fa-square" style="color:${colors[index]}"></i>${num.status} </p>
+                                <p><i class="fa fa-square" style="color:${colors[index]}"></i>${num.name} </p>
                               </td>
-                              <td>${num.count}%</td>
+                              <td>${num.value}%</td>
                             </tr>`
                     $("#openSourceReadmeLanguagesData").append(html);
                 });
 
                 option = {
-    tooltip: {
-        trigger: 'item',
-        formatter: "{a} <br/>{b}: {c} ({d}%)"
-    },
-    legend: {
-        orient: 'vertical',
-        x: 'left',
-        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
-    },
-    series: [
-        {
-            name:'访问来源',
-            type:'pie',
-            radius: ['40%', '80%'],
-            avoidLabelOverlap: false,
-            label: {
-                normal: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    show: true,
-                    textStyle: {
-                        fontSize: '30',
-                        fontWeight: 'bold'
+                    tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                    calculable: true,
+                    series: [
+                    {
+                        name:'language',
+                        type:'pie',
+                        radius: ['55%', '85%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '12',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        data:response
                     }
-                }
-            },
-            labelLine: {
-                normal: {
-                    show: false
-                }
-            },
-            data:response
-        }
-    ]
-};
-
-//                    $('#openSourceReadmeLanguages').each(function(){
-//
-//                        let chart_element = $(this);
-//                        let chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
-//
-//                    });
+                    ]
+                    };
                 myChart.setOption(option);
 
             }
