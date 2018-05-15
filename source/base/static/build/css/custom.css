@@ -4285,3 +4285,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 .large-text{
     font-size:x-large;
 }
+
+.left-vertical-divider{
+    border-left:solid 1px #CCCC;
+}
