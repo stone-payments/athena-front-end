@@ -375,8 +375,8 @@ if (typeof NProgress != 'undefined') {
 	        if(document.getElementById("main-row").style.visibility === "hidden"){
 	        document.getElementById("main-row").style.visibility = "visible";
 	        }
-            init_commits_chart(organization, startDate, endDate);
-            init_issues_chart(organization, startDate, endDate);
+            init_line_chart(organization, startDate, endDate, 'org_commits', 'orgCommitsChart');
+            init_double_line_chart(organization, startDate, endDate, 'org_issues', 'orgIssuesChart');
             OrganizationHeaderInfo(organization, startDate, endDate);
             init_org_last_commit(organization);
             init_org_languages_chart(organization, startDate, endDate);
@@ -390,18 +390,16 @@ if (typeof NProgress != 'undefined') {
 
 	function startProfile(startDate, endDate, name){
             userHeaderInfo(name);
-            console.log("STARTPROFILE");
             init_user_last_commit(name);
-            console.log("init_user_last_commit");
             userScatterBox(name, startDate, endDate);
-            init_commits_chart(name, startDate, endDate);
-            user_worked_repository(name);
+//            init_commits_chart(name, startDate, endDate);
+            user_worked_repository(name, startDate, endDate);
+            init_line_chart(name, startDate, endDate, 'user_commits', 'orgCommitsChart')
 	}
 
     function OrganizationHeaderInfo(organization, startDate, endDate){
         response = ajaxCall(callback, 'proxy/org_header_info', [`name=${organization}`, `startDate=${startDate}`, `endDate=${endDate}`]);
         function callback(response){
-        console.log(response);
             let users = response["users"];
             let teams = response["teams"];
             console.log(teams);
@@ -418,11 +416,8 @@ if (typeof NProgress != 'undefined') {
     /* USER LAST COMMITS */
 
         function init_user_last_commit(name){
-            console.log("PFKEPGKEPEGKPGE");
             $("#user-last-commits").empty();
             response = ajaxCall(callback, 'proxy/user_last_commit', [`name=${name}`]);
-
-
             function callback(response){
                 response.map(function(num, index) {
                 console.log(index);
@@ -438,14 +433,136 @@ if (typeof NProgress != 'undefined') {
                                     <br />
                                     <p class="url">
                                       <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
-                                      <a href="#"><i class="fa fa-calendar"></i> ${num.committed_date} </a>
+                                      <i class="fa fa-calendar"></i> ${num.committed_date}
                                     </p>
                                   </div>
                                 </li>`
                     $("#user-last-commits").append(html);
                 });
             }
+        }
 
+    function init_line_chart(name, startDate, endDate, path, chartId){
+            response = ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+            function callback(response){
+                let myChart = echarts.init(document.getElementById(chartId));
+                let date = response.map(function(num) {return num.day;});
+                let data = response.map(function(num) {return num.count;});
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function (pt) {
+                            return [pt[0], '10%'];
+                        }
+                    },
+                    toolbox: {
+                          show: true,
+                          feature: {
+                            dataZoom : {
+                                show : false,
+                                title : {
+                                    dataZoom : 'dataZoom',
+                                    dataZoomReset : 'dataZoomReset'
+                                }
+                            },
+                            dataView : {
+                                show : true,
+                                title : 'dataView',
+                                readOnly: true,
+                                lang: ['', 'close']
+                            },
+                            restore: {
+                              show: true,
+                              title: "Restore"
+                            },
+                            saveAsImage: {
+                              show: true,
+                              title: "Save Image"
+                            }
+                          }
+                        },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '0%']
+                    },
+                    grid: {
+                        top:    10,
+                        bottom: 60,
+                        left:   50,
+                        right:  50,
+                      },
+                    splitLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    axisLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    dataZoom: [{
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    }, {
+                        start: 0,
+                        end: 10,
+                        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                        handleSize: '80%',
+                        handleStyle: {
+                            color: '#fff',
+                            shadowBlur: 3,
+                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                            shadowOffsetX: 2,
+                            shadowOffsetY: 2
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'Commits',
+                            type:'line',
+                            smooth:false,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(26, 187, 90)'
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(46, 187, 156)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(26, 187, 90)'
+                                    }])
+                                }
+                            },
+                            data: data,
+                             markLine : {
+                                data : [
+                                    {type : 'average', name: 'average'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+            myChart.setOption(option);
+            }
         }
 
 	function init_commits_chart(name, startDate, endDate){
@@ -629,6 +746,149 @@ if (typeof NProgress != 'undefined') {
                                 }
                             },
 
+                        }
+                    ]
+                };
+            myChart.setOption(option);
+            }
+        }
+
+    function init_double_line_chart(name, startDate, endDate, path, chartId){
+            response = ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+            function callback(response){
+                let myChart = echarts.init(document.getElementById(chartId));
+                let date = response[0].map(function(num) {return num.day;});
+                let data1 = response[0].map(function(num) {return num.count;});
+                let data2 = response[1].map(function(num) {return num.count;});
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function (pt) {
+                            return [pt[0], '10%'];
+                        }
+                    },
+                    toolbox: {
+                          show: true,
+                          feature: {
+                            dataZoom : {
+                                show : false,
+                                title : {
+                                    dataZoom : 'dataZoom',
+                                    dataZoomReset : 'dataZoomReset'
+                                }
+                            },
+                            dataView : {
+                                show : true,
+                                title : 'dataView',
+                                readOnly: true,
+                                lang: ['', 'close']
+                            },
+                            restore: {
+                              show: true,
+                              title: "Restore"
+                            },
+                            saveAsImage: {
+                              show: true,
+                              title: "Save Image"
+                            }
+                          }
+                        },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '10%']
+                    },
+                    grid: {
+                        top:    10,
+                        bottom: 60,
+                        left:   50,
+                        right:  50,
+                      },
+                    splitLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    axisLine: {
+                      show: false,
+                      lineStyle: {
+                            color: ['#ccc'],
+                            width: 1,
+                            type: 'solid'
+                        },
+                    },
+                    dataZoom: [{
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    }, {
+                        start: 0,
+                        end: 10,
+                        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                        handleSize: '80%',
+                        handleStyle: {
+                            color: '#fff',
+                            shadowBlur: 3,
+                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                            shadowOffsetX: 2,
+                            shadowOffsetY: 2
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'Opened Issues',
+                            type:'line',
+                            smooth:false,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(26, 187, 90)'
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(46, 187, 156)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(26, 187, 90)'
+                                    }])
+                                }
+                            },
+                            data: data2
+                        },
+                        {
+                            name:'Closed Issues',
+                            type:'line',
+                            smooth:false,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(211, 76, 60)'
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(231, 76, 60)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(211, 76, 30)'
+                                    }])
+                                }
+                            },
+                            data: data1
                         }
                     ]
                 };
@@ -1378,11 +1638,11 @@ if (typeof NProgress != 'undefined') {
 	        switch(page){
 	            case 'profile':
 	                autocompletePath = 'user_login';
-	                commitsPath = 'user_commits';
+//	                commitsPath = 'user_commits';
 	                break;
 	            case 'org':
 	                autocompletePath = null;
-	                commitsPath = 'org_commits';
+//	                commitsPath = 'org_commits';
 	                break;
 	        }
 
@@ -1401,12 +1661,6 @@ if (typeof NProgress != 'undefined') {
                     }
                 startData(startDate, endDate, suggestion['data']);
                 nameToFind = suggestion['data'];
-//                suggestion['data']
-//                userHeaderInfo(suggestion['data']);
-//                init_user_last_commit(suggestion['data']);
-//                userScatterBox(suggestion['data'], startDate, endDate);
-//                init_commits_chart('stone-payments', '2018-01-05', '2018-04-05');
-
             }
         });
 
@@ -2949,9 +3203,9 @@ if (typeof NProgress != 'undefined') {
 
         /* USER WORKED REPOSITORIES */
 
-        function user_worked_repository(name){
+        function user_worked_repository(name, startDate, endDate){
             $("#user-worked-repositories").empty();
-            response = ajaxCall(callback, 'proxy/user_worked_repository', [`name=${name}`]);
+            response = ajaxCall(callback, 'proxy/user_worked_repository', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
 
 
             function callback(response){
@@ -2960,8 +3214,6 @@ if (typeof NProgress != 'undefined') {
                     html =   `<tr>
                                 <td>${index+1}</td>
                                 <td>${n.repo_name}</td>
-
-
                                 <td class="vertical-align-mid">
                                   <div class="progress">
                                     <div class="progress-bar progress-bar-success" style="width:${n.value}%"></div>

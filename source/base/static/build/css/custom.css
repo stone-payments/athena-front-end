@@ -550,6 +550,9 @@ body {
 table.no-margin .progress {
     margin-bottom: 0
 }
+table.no-margin  {
+    margin-bottom: 0px
+}
 .main_content {
     padding: 10px 20px
 }
@@ -1506,6 +1509,7 @@ ul.msg_list li a .message {
     display: block !important;
     font-size: 11px
 }
+
 .dropdown-menu.msg_list span {
     white-space: normal
 }
@@ -2952,7 +2956,7 @@ ul.messages li .message_wrapper blockquote {
     padding: 0px 10px;
     margin: 0;
     border-left: 5px solid #eee;
-    font-size:medium
+    font-size:small
 }
 ul.user_data li {
     margin-bottom: 6px
@@ -3631,6 +3635,9 @@ form:after {
 header {
     width: 100%
 }
+p.url{
+    font-size:small;
+}
 #nprogress .bar {
     background: #1ABB9C
 }
@@ -4288,4 +4295,8 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 
 .left-vertical-divider{
     border-left:solid 1px #CCCC;
+}
+
+.min-fixed_height_350{
+    min-height:345px;
 }
