@@ -4300,3 +4300,6 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 .min-fixed_height_350{
     min-height:345px;
 }
+.small{
+    font-size:27px !important;
+}

@@ -190,8 +190,6 @@
 
 {% block javascripts %}
   {{ super() }}
-  <script>var page='profile'</script>
-  <script src="{{ url_for('static', filename='vendors/raphael/raphael.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/morris.js/morris.min.js') }}"></script>
+  <script>var page=4</script>
 <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts_english.min.js') }}"></script>
 {% endblock javascripts %}

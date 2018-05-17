@@ -22,8 +22,8 @@ def index():
     return render_template('organizations.html')
 
 
-@blueprint.route('/repos')
-def repos():
+@blueprint.route('/repositories')
+def repositories():
     return render_template('repositories.html')
 
 
