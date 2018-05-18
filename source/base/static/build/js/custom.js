@@ -23,8 +23,8 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     startDate = moment().subtract(29, 'days').format('YYYY-MM-DD'),
     endDate = moment().format('YYYY-MM-DD'),
     autocompletePath = null,
+    ORGNAME = null,
     nameToFind = 'athena-front-end';
-
 
 
 // Panel toolbox
@@ -53,8 +53,12 @@ $(document).ready(function() {
         $BOX_PANEL.remove();
     });
 
-    $('#orgNames').on('change', function() {
-        functions.startOrganization(this.value, startDate, endDate);
+    $('#org-names').on('change', function() {
+        ORGNAME = this.value;
+        $('#search-box').autocomplete('setOptions', { serviceUrl: `/proxy/${autocompletePath}?org=${ORGNAME}` });
+        console.log(ORGNAME);
+        if(page === 1) {functions.startOrganization(this.value, startDate, endDate);}
+
     })
 
     $('#find-button').click(function() {
@@ -62,9 +66,7 @@ $(document).ready(function() {
             $('.collapse-link').click();
         }
         suggestion = $('#search-box').val();
-        functions.userHeaderInfo(suggestion);
-        functions.init_user_last_commit(suggestion);
-        functions.userScatterBox(suggestion, startDate, endDate);
+        functions.startData(startDate, endDate, suggestion)
     });
 
     // NProgress
@@ -94,10 +96,23 @@ functions = {
         })
     },
 
+    ajaxCallSync: function(callback, path, parameters) {
+        parameter = `${parameters.join("&")}`;
+        url = `/${path}?${parameter}`;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            success: function(response) {
+                callback(JSON.parse(response));
+            }
+        })
+    },
+
     startData: function(startDate, endDate, name) {
         switch (page) {
             case 1:
-                functions.startOrganization($('#orgNames').val(), startDate, endDate);
+                functions.startOrganization(ORGNAME, startDate, endDate);
                 break;
             case 4:
                 functions.startProfile(startDate, endDate, name);
@@ -114,6 +129,7 @@ functions = {
     startOrganization: function(organization, startDate, endDate) {
         if (document.getElementById("main-row").style.visibility === "hidden") {
             document.getElementById("main-row").style.visibility = "visible";
+            document.getElementById("reportrange_right").style.visibility = "visible";
         }
         functions.init_line_chart(organization, startDate, endDate, 'org_commits', 'orgCommitsChart');
         functions.init_double_line_chart(organization, startDate, endDate, 'org_issues', 'orgIssuesChart');
@@ -140,6 +156,7 @@ functions = {
     startRepositories: function(startDate, endDate, name) {
         if (document.getElementById("main-row").style.visibility === "hidden") {
             document.getElementById("main-row").style.visibility = "visible";
+            document.getElementById("reportrange_right").style.visibility = "visible";
         }
         functions.repositoriesHeaderInfo(name);
         functions.init_line_chart(name, startDate, endDate, 'repo_commits', 'repo-commits-chart')
@@ -212,7 +229,7 @@ functions = {
     },
 
     init_line_chart: function(name, startDate, endDate, path, chartId) {
-        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`, `org=${$('#orgNames').val()}`]);
+        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`, `org=${ORGNAME}`]);
 
         function callback(response) {
             let myChart = echarts.init(document.getElementById(chartId));
@@ -755,7 +772,8 @@ functions = {
     init_autocomplete: function() {
         $('#search-box').autocomplete({
             paramName: 'name',
-            serviceUrl: `/proxy/${autocompletePath}`,
+            noCache: true,
+            serviceUrl: `/proxy/${autocompletePath}?org=${ORGNAME}`,
             onSelect: function(suggestion) {
                 if ($('#main-x-panel').attr('style')) {
                     $('.collapse-link').click();
@@ -766,9 +784,6 @@ functions = {
         });
 
     },
-
-
-
 
     /* DATERANGEPICKER */
 
@@ -1014,16 +1029,18 @@ functions = {
     /* ORG NAMES */
 
     init_chart_orgNames: function() {
-        $("#orgNames").empty();
+        $("#org-names").empty();
         response = functions.ajaxCall(callback, 'proxy/org_names', []);
 
         function callback(response) {
+            $('#org-names').append($("<option></option>").attr("value", null).text('Select Organization'));
             response.map(function(name) {
-                $('#orgNames')
+                $('#org-names')
                     .append($("<option></option>")
                         .attr("value", name.org)
                         .text(name.org));
             });
+            $('#search-box').autocomplete('setOptions', { serviceUrl: `/proxy/${autocompletePath}?org=${ORGNAME}` });
         }
     },
 
@@ -1084,10 +1101,11 @@ functions = {
 }
 $(document).ready(function() {
     functions.init_variables();
+    functions.init_chart_orgNames();
     functions.init_daterangepicker();
     functions.init_daterangepicker_right();
     //    init_CustomNotification();
     functions.init_autocomplete();
-    functions.init_chart_orgNames();
+
 
 });
