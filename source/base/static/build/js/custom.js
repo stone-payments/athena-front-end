@@ -135,6 +135,7 @@ functions = {
         functions.init_double_line_chart(organization, startDate, endDate, 'org_issues', 'orgIssuesChart');
         functions.organizationHeaderInfo(organization, startDate, endDate);
         functions.init_org_last_commit(organization);
+        functions.init_org_last_commit(organization, "org_last_commit", "org-last-commits");
         functions.init_org_languages_chart(organization, startDate, endDate);
         functions.init_pie_chart(organization, 'org_readme', "readmeChart",
             "readmeChartData");
@@ -160,10 +161,10 @@ functions = {
         }
         functions.repositoriesHeaderInfo(name);
         functions.init_line_chart(name, startDate, endDate, 'repo_commits', 'repo-commits-chart')
-//        functions.init_user_last_commit(name);
-//        functions.userScatterBox(name, startDate, endDate);
-//        functions.user_worked_repository(name, startDate, endDate);
-//        functions.init_line_chart(name, startDate, endDate, 'user_commits', 'orgCommitsChart')
+        functions.init_pie_chart(name, 'repo_languages', "repo-language-chart",
+            "repo-language-chart-data");
+        functions.init_double_line_chart(name, startDate, endDate, 'repo_issues', 'repo-issues-chart');
+//        functions.init_org_last_commit(name, "org_last_commit", "org-last-commits");
     },
 
     /* ORGANIZATION HEADER INFO */
@@ -682,7 +683,7 @@ functions = {
 
 
 
-    init_pie_chart: function(organization, path, chartId, dataID) {
+    init_pie_chart: function(name, path, chartId, dataID) {
 
 
         if (typeof(Chart) === 'undefined') {
@@ -693,7 +694,7 @@ functions = {
         if ($(`#${chartId}`).length) {
 
             $(`#${dataID}`).empty();
-            response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${organization}`]);
+            response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `org=${ORGNAME}`]);
 
             function callback(response) {
                 let myChart = echarts.init(document.getElementById(`${chartId}`));
@@ -703,7 +704,7 @@ functions = {
                 let data = response.map(function(num) {
                     return num.value;
                 });
-                colors = ["#E74C3C", "#26B99A", "#3498DB"];
+                colors = ["#be352b", "#2f4354", "#67a1aa", "#d18462", "#95c9af"];
                 response.map(function(num, index) {
                     html = `<tr>
                               <td style="width:0px">
@@ -720,6 +721,7 @@ functions = {
                         formatter: "{a} <br/>{b}: {c} ({d}%)"
                     },
                     calculable: true,
+
                     series: [{
                         name: 'language',
                         type: 'pie',
@@ -1046,9 +1048,9 @@ functions = {
 
     /* ORG LAST COMMITS */
 
-    init_org_last_commit: function(name) {
-        $("#orgLastCommits").empty();
-        response = functions.ajaxCall(callback, 'proxy/org_last_commit', [`name=${name}`]);
+    init_org_last_commit: function(name, path, Id) {
+        $(`#${Id}`).empty();
+        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `org=${ORGNAME}`]);
 
 
         function callback(response) {
@@ -1068,7 +1070,7 @@ functions = {
                                     </div>
                                   </div>
                                 </li>`
-                $("#orgLastCommits").append(html);
+                $(`#${Id}`).append(html);
             });
         }
 
