@@ -167,7 +167,7 @@
           </div>
           <div class="x_content">
             <div class="dashboard-widget-content">
-              <ul class="list-unstyled timeline widget" id="orgLastCommits">
+              <ul class="list-unstyled timeline widget" id="repo-last-commits">
               </ul>
             </div>
           </div>
@@ -181,7 +181,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel tile fixed_height_390">
               <div class="x_title">
-                <h2>Issues <small></small></h2>
+                <h2>Contribuitors <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
@@ -191,49 +191,21 @@
                 <div class="clearfix"></div>
               </div>
               <div class="x_content">
-                <div class="dashboard-widget-content">
-                  <div id="orgIssuesChart" class="demo-placeholder"></div>
-                </div>
+                <table class="data table table-striped no-margin ">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>User</th>
+                        <th>Contribution</th>
+                      <th class="hidden-phone">%</th>
+                    </tr>
+                  </thead>
+                  <tbody id="repo-worked-repositories">
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-        </div>
-
-
-        <div class="row">
-
-          <!-- End to do list -->
-          <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Code Languages</h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-
-                    <div id="orgLanguagesChart" style="height:350px;"></div>
-
-                  </div>
-                </div>
-              </div>
-
-          <!-- start of weather widget -->
-          <!-- end of weather widget -->
         </div>
       </div>
     </div>

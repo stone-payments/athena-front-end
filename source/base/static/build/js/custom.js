@@ -149,7 +149,7 @@ functions = {
         functions.userHeaderInfo(name);
         functions.init_user_last_commit(name);
         functions.userScatterBox(name, startDate, endDate);
-        functions.user_worked_repository(name, startDate, endDate);
+        functions.worked_repository(name, startDate, endDate, "user_worked_repository", "user-worked-repositories");
         functions.init_line_chart(name, startDate, endDate, 'user_commits', 'orgCommitsChart')
     },
 
@@ -164,7 +164,8 @@ functions = {
         functions.init_pie_chart(name, 'repo_languages', "repo-language-chart",
             "repo-language-chart-data");
         functions.init_double_line_chart(name, startDate, endDate, 'repo_issues', 'repo-issues-chart');
-//        functions.init_org_last_commit(name, "org_last_commit", "org-last-commits");
+        functions.init_org_last_commit(name, "repo_last_commit", "repo-last-commits");
+        functions.worked_repository(name, startDate, endDate, "repo_members", "repo-worked-repositories");
     },
 
     /* ORGANIZATION HEADER INFO */
@@ -699,10 +700,7 @@ functions = {
             function callback(response) {
                 let myChart = echarts.init(document.getElementById(`${chartId}`));
                 let labels = response.map(function(num) {
-                    return num.name;
-                });
-                let data = response.map(function(num) {
-                    return num.value;
+                    return {"name": String(num.name), "value": num.value};
                 });
                 colors = ["#be352b", "#2f4354", "#67a1aa", "#d18462", "#95c9af"];
                 response.map(function(num, index) {
@@ -745,7 +743,7 @@ functions = {
                                 show: true
                             }
                         },
-                        data: response
+                        data: labels
                     }]
                 };
                 myChart.setOption(option);
@@ -1080,15 +1078,15 @@ functions = {
 
     /* USER WORKED REPOSITORIES */
 
-    user_worked_repository: function(name, startDate, endDate) {
-        $("#user-worked-repositories").empty();
-        response = functions.ajaxCall(callback, 'proxy/user_worked_repository', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+    worked_repository: function(name, startDate, endDate, path, Id) {
+        $(`#${Id}`).empty();
+        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`, `org=${ORGNAME}`]);
 
         function callback(response) {
             response.map(function(n, index) {
                 html = `<tr>
                                 <td>${index+1}</td>
-                                <td>${n.repo_name}</td>
+                                <td>${n.name}</td>
                                 <td class="vertical-align-mid">
                                   <div class="progress">
                                     <div class="progress-bar progress-bar-success" style="width:${n.value}%"></div>
@@ -1096,7 +1094,7 @@ functions = {
                                 </td>
                                 <td class="hidden-phone">${n.value}%</td>
                               </tr>`
-                $("#user-worked-repositories").append(html);
+                $(`#${Id}`).append(html);
             });
         }
     },
