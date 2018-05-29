@@ -114,13 +114,16 @@ functions = {
             case 1:
                 functions.startOrganization(ORGNAME, startDate, endDate);
                 break;
+            case 2:
+                functions.startTeams(startDate, endDate, name);
+                break;
+            case 3:
+                functions.startRepositories(startDate, endDate, name);
+                break;
             case 4:
                 functions.startProfile(startDate, endDate, name);
                 break;
-            case 3:
-                console.log(name);
-                functions.startRepositories(startDate, endDate, name);
-                break;
+
         }
     },
 
@@ -148,7 +151,7 @@ functions = {
     startProfile: function(startDate, endDate, name) {
         functions.userHeaderInfo(name);
         functions.init_user_last_commit(name);
-        functions.userScatterBox(name, startDate, endDate);
+        functions.userScatterBox(name, startDate, endDate, "user_new_work", "user-scatter-chart");
         functions.worked_repository(name, startDate, endDate, "user_worked_repository", "user-worked-repositories");
         functions.init_line_chart(name, startDate, endDate, 'user_commits', 'orgCommitsChart')
     },
@@ -165,6 +168,22 @@ functions = {
             "repo-language-chart-data");
         functions.init_double_line_chart(name, startDate, endDate, 'repo_issues', 'repo-issues-chart');
         functions.init_org_last_commit(name, "repo_last_commit", "repo-last-commits");
+        functions.worked_repository(name, startDate, endDate, "repo_members", "repo-worked-repositories");
+    },
+
+    /* START TEAMS */
+    startTeams: function(startDate, endDate, name) {
+        if (document.getElementById("main-row").style.visibility === "hidden") {
+            document.getElementById("main-row").style.visibility = "visible";
+            document.getElementById("reportrange_right").style.visibility = "visible";
+        }
+        functions.repositoriesHeaderInfo(name);
+        functions.userScatterBox(name, startDate, endDate, "team_new_work", "team-scatter-chart");
+        functions.init_line_chart(name, startDate, endDate, 'team_commits', 'team-commits-chart')
+        functions.init_pie_chart(name, 'team_languages', "team-language-chart",
+            "team-language-chart-data");
+        functions.init_double_line_chart(name, startDate, endDate, 'team_issues', 'team-issues-chart');
+        functions.init_org_last_commit(name, "team_last_commits", "team-last-commits");
         functions.worked_repository(name, startDate, endDate, "repo_members", "repo-worked-repositories");
     },
 
@@ -186,7 +205,7 @@ functions = {
 
     /* REPOSITORIES HEADER INFO */
     repositoriesHeaderInfo: function(name) {
-        response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org=stone-payments`]);
+        response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org={ORGNAME}`]);
 
         function callback(response) {
             console.log(response["opensource"]);
@@ -434,7 +453,7 @@ functions = {
     },
 
     init_double_line_chart: function(name, startDate, endDate, path, chartId) {
-        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`, `org=${ORGNAME}`]);
 
         function callback(response) {
             let myChart = echarts.init(document.getElementById(chartId));
@@ -597,11 +616,12 @@ functions = {
         }
     },
 
-    userScatterBox: function(name, startDate, endDate) {
-        response = functions.ajaxCall(callback, 'proxy/user_new_work', [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`]);
+    userScatterBox: function(name, startDate, endDate, path, id) {
+        response = functions.ajaxCall(callback, `proxy/${path}`, [`name=${name}`, `startDate=${startDate}`, `endDate=${endDate}`, `org=${ORGNAME}`]);
 
         function callback(response) {
-            let myChart = echarts.init(document.getElementById('user-scatter-chart'));
+            let myChart = echarts.init(document.getElementById(id));
+            console.log(response['data']);
             var data = [
                 [44056, 81.8, 20, 'Australia'],
                 [-100, -90,
@@ -609,6 +629,41 @@ functions = {
                     "mralves"
                 ]
             ];
+            let series = response['data'].map(function(data) {
+                return {
+                    name: data[3],
+                    data: [data],
+                    type: 'scatter',
+                    symbolSize: function(data) {
+                        return Math.sqrt(data[2]) * 7;
+//                                                    return 40;
+                    },
+                    label: {
+                        emphasis: {
+                            show: true,
+                            formatter: function(param) {
+                                return param.data[3];
+                            },
+                            position: 'top'
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(25, 100, 150, 0.5)',
+                            shadowOffsetY: 5,
+                            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
+                                offset: 0,
+                                color: 'rgb(129, 227, 238)'
+                            }, {
+                                offset: 1,
+                                color: 'rgb(25, 183, 207)'
+                            }])
+                        }
+                    }
+                };
+            });
+            console.log(series);
             option = {
                 title: {
                     text: 'New Work - Refactor - Commits scatter box',
@@ -644,38 +699,7 @@ functions = {
                         }
                     },
                 },
-                series: [{
-                    name: '2015',
-                    data: [response['data']],
-                    type: 'scatter',
-                    symbolSize: function(data) {
-                        return Math.sqrt(data[2]) * 7;
-                        //                            return 40;
-                    },
-                    label: {
-                        emphasis: {
-                            show: true,
-                            formatter: function(param) {
-                                return param.data[3];
-                            },
-                            position: 'top'
-                        }
-                    },
-                    itemStyle: {
-                        normal: {
-                            shadowBlur: 10,
-                            shadowColor: 'rgba(25, 100, 150, 0.5)',
-                            shadowOffsetY: 5,
-                            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
-                                offset: 0,
-                                color: 'rgb(129, 227, 238)'
-                            }, {
-                                offset: 1,
-                                color: 'rgb(25, 183, 207)'
-                            }])
-                        }
-                    }
-                }]
+                series: series,
             };
             myChart.setOption(option);
         }
@@ -758,11 +782,14 @@ functions = {
 
     init_variables: function() {
         switch (page) {
-            case 4:
-                autocompletePath = 'user_login';
+            case 2:
+                autocompletePath = 'team_name';
                 break;
             case 3:
                 autocompletePath = 'repo_name';
+                break;
+            case 4:
+                autocompletePath = 'user_login';
                 break;
         }
 
