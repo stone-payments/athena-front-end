@@ -184,7 +184,7 @@ functions = {
             "team-language-chart-data");
         functions.init_double_line_chart(name, startDate, endDate, 'team_issues', 'team-issues-chart');
         functions.init_org_last_commit(name, "team_last_commits", "team-last-commits");
-        functions.worked_repository(name, startDate, endDate, "repo_members", "repo-worked-repositories");
+        functions.worked_repository(name, startDate, endDate, "team_repo_members", "repo-worked-repositories");
     },
 
     /* ORGANIZATION HEADER INFO */
@@ -205,7 +205,7 @@ functions = {
 
     /* REPOSITORIES HEADER INFO */
     repositoriesHeaderInfo: function(name) {
-        response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org={ORGNAME}`]);
+        response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org=${ORGNAME}`]);
 
         function callback(response) {
             console.log(response["opensource"]);
