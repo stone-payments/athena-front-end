@@ -177,7 +177,7 @@ functions = {
             document.getElementById("main-row").style.visibility = "visible";
             document.getElementById("reportrange_right").style.visibility = "visible";
         }
-        functions.repositoriesHeaderInfo(name);
+        functions.teamsHeaderInfo(name);
         functions.userScatterBox(name, startDate, endDate, "team_new_work", "team-scatter-chart");
         functions.init_line_chart(name, startDate, endDate, 'team_commits', 'team-commits-chart')
         functions.init_pie_chart(name, 'team_languages', "team-language-chart",
@@ -205,6 +205,23 @@ functions = {
 
     /* REPOSITORIES HEADER INFO */
     repositoriesHeaderInfo: function(name) {
+        response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org=${ORGNAME}`]);
+
+        function callback(response) {
+            console.log(response["opensource"]);
+            let opensource = String(response["opensource"]);
+            let readme = String(response["readme"]);
+            let license = String(response["license_type"]);
+            let readmeLanguage = String(response["readme_language"]);
+            $("#opensource-info").text(opensource);
+            $("#readme-info").text(readme);
+            $("#license-info").text(license);
+            $("#readme-language-info").text(readmeLanguage);
+        }
+    },
+
+      /* TEAM HEADER INFO */
+    teamsHeaderInfo: function(name) {
         response = functions.ajaxCall(callback, 'proxy/repo_best_practices', [`name=${name}`, `org=${ORGNAME}`]);
 
         function callback(response) {
